@@ -1,0 +1,45 @@
+#canvas{
+    width: 1000px;
+     height: 1000px;
+     position: relative;
+     background: yellow;
+
+}
+
+ody {
+  --nav-width: 200px;
+  margin: 0 0 0 var(--nav-width);
+  font-family: 'Quicksand', sans-serif;
+  font-size: 24px;
+}
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--nav-width);
+  font-size: 24px ;
+  /* height: 100vh; */
+  /* background: #a10a7cd7; */
+}
+
+.nav__link {
+  display: block;
+  padding: 12px 18px;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.nav__link:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+#app {
+  margin: 2em;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+a {
+  color: black;
+}
+
