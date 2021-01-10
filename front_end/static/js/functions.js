@@ -43,10 +43,10 @@ function PlayerObject(id, pos_x, pos_y, state){
   this.followMouse = function(){
     elem = document.getElementById(this.id);
     elem.style.boxShadow = "5px 5px 5px gray";
-    X = (Mouseposition.x - document.getElementById("canvas").getBoundingClientRect().left-25) ;
-    Y = (Mouseposition.y - document.getElementById("canvas").getBoundingClientRect().top - 25) ;
-    W = document.getElementById("canvas").getBoundingClientRect().width -25;
-    H = document.getElementById("canvas").getBoundingClientRect().height -25;
+    var X = (Mouseposition.x - document.getElementById("canvas").getBoundingClientRect().left-25) ;
+    var Y = (Mouseposition.y - document.getElementById("canvas").getBoundingClientRect().top - 25) ;
+    var W = document.getElementById("canvas").getBoundingClientRect().width -25;
+    var H = document.getElementById("canvas").getBoundingClientRect().height -25;
 
     if (X <= W  && X >= 0 && Y <= H && Y >= 0 ){
       elem.style.left = (Mouseposition.x - document.getElementById("canvas").getBoundingClientRect().left-25)+"px";
@@ -138,12 +138,12 @@ function PlayerObject(id, pos_x, pos_y, state){
           ref = parseInt(defend.style.top,10);
 
           if(tactic === "1"){
-            id_array = [];
-            dic_pos = {};
-            x_array = [];
+            var id_array = [];
+            var dic_pos = {};
+            var x_array = [];
             for (k = 0; k < defendCount; k++){
-              def = document.getElementById(`defend${k}`)
-              xPos = parseInt(def.style.left,10);
+              var def = document.getElementById(`defend${k}`)
+              var xPos = parseInt(def.style.left,10);
               dic_pos[xPos] = k;
               x_array.push(xPos);
             };
@@ -163,9 +163,9 @@ function PlayerObject(id, pos_x, pos_y, state){
             if (indexCorner <= Math.floor((defendCount-1)/2)){
               console.log(`index corner is ${indexCorner}`);
               console.log("left corner right shut")
-              corner = id_array.slice(0,Math.floor((defendCount-1)/2)+1);
-              shut = id_array.slice(Math.floor((defendCount-1)/2)+1);
-              straight = [];
+              var corner = id_array.slice(0,Math.floor((defendCount-1)/2)+1);
+              var shut = id_array.slice(Math.floor((defendCount-1)/2)+1);
+              var straight = [];
               console.log(`corner is ${corner}`);
               console.log(`shut is ${shut}`);
               console.log(`straight is ${straight}`);
@@ -173,9 +173,9 @@ function PlayerObject(id, pos_x, pos_y, state){
             }
             else{
               console.log("left shut right corner");
-              shut = id_array.slice(0,Math.floor((defendCount-1)/2)+1);
-              corner = id_array.slice(Math.floor((defendCount-1)/2)+1);
-              straight = [];
+              var shut = id_array.slice(0,Math.floor((defendCount-1)/2)+1);
+              var corner = id_array.slice(Math.floor((defendCount-1)/2)+1);
+              var straight = [];
               console.log(`corner is ${corner}`);
               console.log(`shut is ${shut}`);
               console.log(`straight is ${straight}`);
@@ -184,9 +184,9 @@ function PlayerObject(id, pos_x, pos_y, state){
           }
           else{
             if(tactic === "2"){
-              shut = [] ;
-              corner = [] ;
-              straight = id_array;
+              var shut = [] ;
+              var corner = [] ;
+              var straight = id_array;
               this.back(0,-200,shut,corner,straight,tactic, ref)
             }
           }
@@ -201,29 +201,83 @@ function PlayerObject(id, pos_x, pos_y, state){
 
   this.back = function(x,y, shut, corner, straight, tactic, ref){ //shut and corner are arrays containing the ids of the corner and shuting players
     console.log(`BACKINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG x is ${x} y is ${y}`);
+    var ls_move = []
+    var ls_def = []
+    ls_def = corner.concat(shut)
+    // var x_move_shut = [];
+    // var y_move_shut = [];
+    // var x_move_corner = [];
+    // var y_move_corner = [];
+    // var y_move_straight = [];
     if(tactic === "1"){
-
+      var W = document.getElementById("canvas").getBoundingClientRect().width - 25;
       corner.forEach(e => {
-        y_back = (ref + y) - parseInt(document.getElementById(`defend${e}`).style.top,10);
+        var top = parseInt(document.getElementById(`defend${e}`).style.top,10) ;
+        var left = parseInt(document.getElementById(`defend${e}`).style.left,10);
+        var y_func = () =>{
+          
+          if( ref + y < 0){
+            return -top
+          }else{
+            return (ref + y) - top;
+          }
+        };
+        
+        var x_func = () =>{
+          if (left + x < 0){
+            return -left;
+          }else{ if (left + x > W){
+            return W - left;
+          }else{
+            return x;
+          }
+          }
+        };
+        var y_move = y_func();
+        var x_move = x_func();
+        ls_move.push([x_move,y_move]);
         anime({
           targets:`#defend${e}`,
-          translateX: x ,
-          translateY: y_back,//y
+          translateX: x_move ,
+          translateY: y_move,//y
           duration: 2000,
           loop: false,
         });
       })
   
       shut.forEach(e => {
-        y_back = (ref + y) - parseInt(document.getElementById(`defend${e}`).style.top,10);
+        var top = parseInt(document.getElementById(`defend${e}`).style.top,10) ;
+        var left = parseInt(document.getElementById(`defend${e}`).style.left,10);
+        var y_func = () =>{
+          
+          if( ref + y < 0){
+            return -top
+          }else{
+            return (ref + y) - top;
+          }
+        };
+        
+        var x_func =  () =>{
+          if (left + x < 0){
+            return -left;
+          }else{ if (left + x > W){
+            return W - left;
+          }else{
+            return x
+          }
+          }
+        };
+        var y_move = y_func();
+        var x_move = x_func();
+        ls_move.push([x_move,y_move]);
         anime({
           targets:`#defend${e}`,
           translateY: {
-            value: y_back ,//y
+            value: y_move ,//y
             duration: 1000,
           },
           translateX:{
-            value: x,
+            value: x_move,
             duration: 1000,
             delay: 1000
           },
@@ -234,11 +288,21 @@ function PlayerObject(id, pos_x, pos_y, state){
     }else{
       if(tactic ==="2"){
         straight.forEach(e =>{
-          y_back = (ref + y) - parseInt(document.getElementById(`defend${e}`).style.top,10)
+          var top = parseInt(document.getElementById(`defend${e}`).style.top,10) ;
+          var y_func = () =>{
+          
+            if( ref + y < 0){
+              return - top;
+            }else{
+              return (ref + y) - top;
+            }
+          };
+          y_move = y_func()
+          ls_move.push([0,y_move]);
           anime({
             targets:`#defend${e}`,
-            translateX: x ,
-            translateY: y_back ,//y
+            translateX: x,
+            translateY: y_move ,//y
             duration: 2000,
             loop: false,
           });
@@ -249,11 +313,14 @@ function PlayerObject(id, pos_x, pos_y, state){
     
     setTimeout( () =>{
       for (i = 0; i < defendCount; i++){
-        y_back = (ref + y) - parseInt(document.getElementById(`defend${i}`).style.top,10)
-        elem = document.getElementById(`defend${i}`);
+        var id = ls_def[i]
+        x_back = ls_move[i][0]
+        y_back = ls_move[i][1]
+        // y_back = (ref + y) - parseInt(document.getElementById(`defend${id}`).style.top,10)
+        elem = document.getElementById(`defend${id}`);
         console.log("changing style")
         elem.style.top = (parseInt(elem.style.top,10) + y_back) +"px";
-        elem.style.left = (parseInt(elem.style.left,10) + x) + "px";
+        elem.style.left = (parseInt(elem.style.left,10) + x_back) + "px";
         elem.style.transform = "translateX(0px) translateY(0px)";
       };
       
@@ -415,7 +482,7 @@ function PlayerObject(id, pos_x, pos_y, state){
     var height;
     switch(opt){
       case "1": 
-        width = 500;
+        width = 1000;
         height = (width/5)*7;
         break;
       case "2":
@@ -452,10 +519,6 @@ function PlayerObject(id, pos_x, pos_y, state){
   };
 
  
-
-
-
-
   //*********************************VARIABLES */
 
   var Mouseposition = {

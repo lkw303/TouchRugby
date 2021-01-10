@@ -2,7 +2,7 @@
     width: 1000px;
      height: 1000px;
      position: relative;
-     background: yellow;
+     background: gray
 
 }
 
@@ -19,7 +19,7 @@ ody {
   width: var(--nav-width);
   font-size: 24px ;
   /* height: 100vh; */
-  /* background: #a10a7cd7; */
+  background: white;
 }
 
 .nav__link {
