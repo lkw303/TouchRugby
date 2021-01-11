@@ -494,8 +494,8 @@ function PlayerObject(id, pos_x, pos_y, state){
   });
 
   document.addEventListener('touchmove', function(e) {
-    Mouseposition.x = e.clientX;
-    Mouseposition.y = e.clientY;
+    Mouseposition.x = e.touches[0].clientX;
+    Mouseposition.y = e.touches[0].clientY;
     //console.log(Mouseposition)
   });
 
