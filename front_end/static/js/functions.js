@@ -366,13 +366,11 @@ function PlayerObject(id, pos_x, pos_y, state){
     elem.addEventListener("mousedown",() =>{
       console.log(`${this.id} is being clicked`);
       this.isClicked = true;
-    };
+    });
     elem.addEventListener("touchstart",() =>{
       console.log(`${this.id} is being touched`);
       this.isClicked = true;
-    }
-    
-    );
+    });
 
     document.addEventListener("mousemove", () =>{
       if (this.isClicked){
@@ -383,7 +381,6 @@ function PlayerObject(id, pos_x, pos_y, state){
             this.dump(); // check for collision with deefender and dump
           }
         };
-        
         console.log("follwing mouse")
       }
     })
