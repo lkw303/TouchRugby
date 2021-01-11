@@ -490,6 +490,12 @@ function PlayerObject(id, pos_x, pos_y, state){
     //console.log(Mouseposition)
   });
 
+  document.addEventListener('touchmove', function(e) {
+    Mouseposition.x = e.clientX;
+    Mouseposition.y = e.clientY;
+    //console.log(Mouseposition)
+  });
+
   function updateCanvas(){
     console.log("updating canvas");
     elem = document.getElementById("canvas");
@@ -543,13 +549,11 @@ function PlayerObject(id, pos_x, pos_y, state){
     y:0
   };
 
+
+
   var hasBall = false;
 
   
-
-
-
-
 
   function myMove() {
     var elem = document.getElementById("animation");
