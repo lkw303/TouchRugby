@@ -366,13 +366,18 @@ function PlayerObject(id, pos_x, pos_y, state){
     elem.addEventListener("mousedown",() =>{
       console.log(`${this.id} is being clicked`);
       this.isClicked = true;
-    });
+    };
+    elem.addEventListener("touchstart",() =>{
+      console.log(`${this.id} is being touched`);
+      this.isClicked = true;
+    }
+    
+    );
 
     document.addEventListener("mousemove", () =>{
       if (this.isClicked){
         this.followMouse();
         if(this.state ==="attack"){
-          console.log("this is an attacker")
           this.ballFollow();
           if(this.holdBall){
             this.dump(); // check for collision with deefender and dump
@@ -380,10 +385,25 @@ function PlayerObject(id, pos_x, pos_y, state){
         };
         
         console.log("follwing mouse")
+      }
+    })
+
+    document.addEventListener("touchmove", () =>{
+      if (this.isClicked){
+        this.followMouse();
+        if(this.state ==="attack"){
+          this.ballFollow();
+          if(this.holdBall){
+            this.dump(); // check for collision with deefender and dump
+          }
+        };
+        
+        console.log("follwing touch")
         
       }
       
     })
+
     document.addEventListener("mouseup", () =>{
       this.isClicked = false;
       console.log(`${this.id} is no longer being clicked`);
@@ -525,10 +545,10 @@ function PlayerObject(id, pos_x, pos_y, state){
     x:0,
     y:0
   };
+
   var hasBall = false;
+
   
-
-
 
 
 
