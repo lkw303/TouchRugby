@@ -42,7 +42,7 @@ function PlayerObject(id, pos_x, pos_y, state){
 
   this.followMouse = function(){
     elem = document.getElementById(this.id);
-    elem.style.boxShadow = "5px 5px 5px gray";
+    elem.style.boxShadow = "5px 5px 5px black";
     var X = (Mouseposition.x - document.getElementById("canvas").getBoundingClientRect().left-25) ;
     var Y = (Mouseposition.y - document.getElementById("canvas").getBoundingClientRect().top - 25) ;
     var W = document.getElementById("canvas").getBoundingClientRect().width -25;
@@ -394,16 +394,19 @@ function PlayerObject(id, pos_x, pos_y, state){
             this.dump(); // check for collision with deefender and dump
           }
         };
-        
         console.log("follwing touch")
-        
       }
-      
     })
 
     document.addEventListener("mouseup", () =>{
       this.isClicked = false;
       console.log(`${this.id} is no longer being clicked`);
+      document.getElementById(this.id).style.boxShadow = "0px 0px 0px";
+    })
+
+    document.addEventListener("touchend", () =>{
+      this.isClicked = false;
+      console.log(`${this.id} is no longer being touched`);
       document.getElementById(this.id).style.boxShadow = "0px 0px 0px";
     })
     //setInterval(this.follow_mouse(), 10)
