@@ -184,6 +184,10 @@ function PlayerObject(id, pos_x, pos_y, state){
           }
           else{
             if(tactic === "2"){
+              var id_array = []
+              for (i = 0; i < defendCount; i++){
+                id_array.push(i)
+              };
               var shut = [] ;
               var corner = [] ;
               var straight = id_array;
@@ -203,13 +207,14 @@ function PlayerObject(id, pos_x, pos_y, state){
     console.log(`BACKINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG x is ${x} y is ${y}`);
     var ls_move = []
     var ls_def = []
-    ls_def = corner.concat(shut)
     // var x_move_shut = [];
     // var y_move_shut = [];
     // var x_move_corner = [];
     // var y_move_corner = [];
     // var y_move_straight = [];
     if(tactic === "1"){
+      
+      ls_def = corner.concat(shut)
       var W = document.getElementById("canvas").getBoundingClientRect().width - 25;
       corner.forEach(e => {
         var top = parseInt(document.getElementById(`defend${e}`).style.top,10) ;
@@ -287,17 +292,18 @@ function PlayerObject(id, pos_x, pos_y, state){
       
     }else{
       if(tactic ==="2"){
+        ls_def = straight;
+
         straight.forEach(e =>{
           var top = parseInt(document.getElementById(`defend${e}`).style.top,10) ;
           var y_func = () =>{
-          
             if( ref + y < 0){
-              return - top;
+              return -top;
             }else{
               return (ref + y) - top;
             }
           };
-          y_move = y_func()
+          y_move = y_func();
           ls_move.push([0,y_move]);
           anime({
             targets:`#defend${e}`,
@@ -465,18 +471,32 @@ function PlayerObject(id, pos_x, pos_y, state){
   };
 
   function removePlayer(){
-    playerCount -= 1;
-    document.getElementById(`player${playerCount}`).remove();
+    if(playerCount >= 1){
+      playerCount -= 1;
+      document.getElementById(`player${playerCount}`).remove();
+    }else{
+      console.log("already no more players")
+    }
+    
   };
 
   function removeAttack(){
-    attackCount -= 1;
-    document.getElementById(`attack${attackCount}`).remove();
+    if(attackCount >= 1){
+      attackCount -= 1;
+      document.getElementById(`attack${attackCount}`).remove();
+    }else{
+      console.log("already no more attackers")
+    };
   };
 
   function removeDefend(){
-    defendCount -= 1;
-    document.getElementById(`defend${defendCount}`).remove();
+    if (defendCount >= 1){
+      defendCount -= 1;
+      document.getElementById(`defend${defendCount}`).remove();
+    }else{
+      console.log("already no more defenders");
+    }
+    
   };
   
 
