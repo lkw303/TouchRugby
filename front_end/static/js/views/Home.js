@@ -19,8 +19,7 @@ export default class extends AbstractView{
             This is the Home Page
         </p>
         <div id = "canvas" class = "canvas">
-            
-        
+        <svg id = "layer1"></svg>
         </div>
         </br>
         <div id = "buttons" class = 'buttons'>
@@ -35,6 +34,7 @@ export default class extends AbstractView{
             <button type = "buttons" class = "ball" id = "ball" onclick = "createBall()"> Add Ball</button>
             <button type = "buttons" class = "destructor" id = "destructed" onclick = "removeBall()"> remove ball</button>
             <button type = "buttons" class = "constructor" id = "constructor" onclick = "createTeam()"> Create Team </button>
+            <button type = "buttons" class = "frameStart" id = "frameStart" onclick = "startFrame()">Start a Frame</button>
             </br>
             <input type="number" id = "height">height</input>
             </br>
@@ -56,8 +56,21 @@ export default class extends AbstractView{
             <select name ="tactic" id = "tactic">
                 <option value = 1>Corner & Shut</options>
                 <option value = 2>Back Straight</options>
+                <option value = 3>None</options>
             </select>
             </br>
+            Toggle Frame
+            <select name ="frameOn" id = "frameOn" onchange = "toggleFrame()">
+                <option value = 2>False</options>
+                <option value = 1>True</options>
+            </select>
+            </br>
+            Toggle Dump
+            <select name ="dump" id = "dump" >
+                <option value = 1>True</options>
+                <option value = 2>False</options>
+            </select>
+            <button type = "buttons" id = "toggleFrame" onchange = "toggleFrame()" ></button>
         </div>
        
 ` ;
