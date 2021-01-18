@@ -13,9 +13,10 @@ function PlayerObject(id, pos_x, pos_y, state) {
   this.isTouched = false;
   this.pathCount = 0;
   this.traceCount = 0;
-  this.points =[]
+  this.points = []
   this.strokes = []
   this.prev = null;
+  this.iterator = 0;
 
 
   this.init_msg = function () {
@@ -351,27 +352,32 @@ function PlayerObject(id, pos_x, pos_y, state) {
   this.frameOn = function () {
     console.log("frame on")
     var elem = document.getElementById(this.id);
-    elem.addEventListener("mousedown", () => { this.onPress()});
+    elem.addEventListener("mousedown", () => { this.onPress() });
   };
 
   this.frameOff = function () {
     var elem = document.getElementById(this.id);
-    elem.removeEventListener("mousedown", () => { this.onPress()});
+    elem.removeEventListener("mousedown", () => { this.onPress() });
   };
 
-  let onDrag = ()=>{this.onDrag();};
-  let onEnd = ()=>{this.onEnd();};
+  let onDrag = () => { this.onDrag(); };
+  let onEnd = () => { this.onEnd(); };
 
   this.onPress = function () {
     console.log('pressing')
     var canvas = canvas = document.getElementById("layer1");
     var elem = document.getElementById(this.id);
     elem.addEventListener("mouseup", onEnd);
-    elem.addEventListener("mousemove", onDrag);    
+    elem.addEventListener("mousemove", onDrag);
     var newpath = document.createElementNS('http://www.w3.org/2000/svg', "path");
     var newtrace = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
     newpath.id = `path${this.pathCount}`;
-    newtrace.id = `trace${this.traceCount}`
+    newpath.classList.add(`path${this.pathCount}`);
+    newpath.classList.add(`${this.id}`);
+    newtrace.id = `trace${this.traceCount}`;
+    newtrace.classList.add(`trace${this.traceCount}`);
+    newtrace.classList.add(`${this.id}`);
+
     canvas.appendChild(newpath);
     canvas.appendChild(newtrace);
     var x = Mouseposition.x;
@@ -408,7 +414,7 @@ function PlayerObject(id, pos_x, pos_y, state) {
     var newtrace = document.getElementById(`trace${this.traceCount - 1}`);
     var x = Mouseposition.x;
     var y = Mouseposition.y;
-  
+
     var stroke = {
       x: x,
       y: y
@@ -418,7 +424,6 @@ function PlayerObject(id, pos_x, pos_y, state) {
     this.strokes.push(stroke);
     this.points.push(x, y);
     newtrace.setAttribute("points", this.points);
-  
 
   };
 
@@ -430,110 +435,135 @@ function PlayerObject(id, pos_x, pos_y, state) {
     var newtrace = document.getElementById(`trace${this.traceCount - 1}`);
     newpath.setAttribute("d", this.solve(this.points));
     newtrace.setAttribute("points", "");
-    elem.removeEventListener("mousemove", onDrag);  
+    elem.removeEventListener("mousemove", onDrag);
     elem.removeEventListener("mouseup", onEnd);
-    
+
     console.log("removed")
-     
+
   };
 
-  this.solve = function(data, k) {
-  
+  this.solve = function (data, k) {
+
     if (k == null) k = 1;
-  
+
     var size = data.length;
     var last = size - 4;
-  
+
     var path = `M${data[0]},${data[1]}`;
-  
+
     for (var i = 0; i < size - 2; i += 2) {//if (window.CP.shouldStopExecution(0)) break;
-  
+
       var x0 = i ? data[i - 2] : data[0];
       var y0 = i ? data[i - 1] : data[1];
-  
+
       var x1 = data[i + 0];
       var y1 = data[i + 1];
-  
+
       var x2 = data[i + 2];
       var y2 = data[i + 3];
-  
+
       var x3 = i !== last ? data[i + 4] : x2;
       var y3 = i !== last ? data[i + 5] : y2;
-  
+
       var cp1x = x1 + (x2 - x0) / 6 * k;
       var cp1y = y1 + (y2 - y0) / 6 * k;
-  
+
       var cp2x = x2 - (x3 - x1) / 6 * k;
       var cp2y = y2 - (y3 - y1) / 6 * k;
-  
+
       path += ` C${cp1x},${cp1y},${cp2x},${cp2y},${x2},${y2}`;
     }//window.CP.exitedLoop(0);
-    
+
     return path;
   };
 
-  
 
-
-  this.init = function () {
-    this.init_html();
-    this.init_msg();
-    elem = document.getElementById(this.id);
-    elem.style.borderRadius = "50%"
-    elem.addEventListener("mousedown", () => {
-      console.log(`${this.id} is being clicked`);
-      this.isClicked = true;
-    });
-    elem.addEventListener("touchstart", () => {
-      console.log(`${this.id} is being touched`);
-      this.isClicked = true;
-    });
-
-    document.addEventListener("mousemove", () => {
-      if (this.isClicked) {
-        this.followMouse();
-        if (this.state === "attack") {
-          this.ballFollow();
-          if (this.holdBall) {
-            var e = document.getElementById("dump");
-            opt = e.options[e.selectedIndex].value;
-            if (opt === "1") { // check if dumping set to true
-              this.dump();  // check for collision with deefender and dump
-            }
-          }
-        };
+  this.animate = function(){
+    if (this.pathCount > 0) {
+      console.log("animating");
+      // var path = anime.path(".screen path");//class of div that contains the 
+      var path = anime.path(`#path${this.iterator}`);
+      anime({
+        targets: `#${this.id}`,
+        translateX: path('x'),
+        translateY: path('y'),
+        // rotate: path('angle'),
+        easing: 'linear',
+        duration: 2000,
+        loop: false,
+      });
+      if (iterator + 1 === pathCount) {
+        iterator = 0
       }
-    })
-
-    document.addEventListener("touchmove", () => {
-      if (this.isClicked) {
-        this.followMouse();
-        if (this.state === "attack") {
-          this.ballFollow();
-          if (this.holdBall) {
-            this.dump(); // check for collision with deefender and dump
-          }
-        };
-        console.log("follwing touch")
-      }
-    })
-
-    document.addEventListener("mouseup", () => {
-      this.isClicked = false;
-      console.log(`${this.id} is no longer being clicked`);
-      document.getElementById(this.id).style.boxShadow = "0px 0px 0px";
-    })
-
-    document.addEventListener("touchend", () => {
-      this.isClicked = false;
-      console.log(`${this.id} is no longer being touched`);
-      document.getElementById(this.id).style.boxShadow = "0px 0px 0px";
-    })
-    //setInterval(this.follow_mouse(), 10)
-    //setInterval(this.move(), 10);
+      else {
+        iterator += 1
+      };
+    };
   };
 
-  this.init()
+
+
+
+
+this.init = function () {
+  this.init_html();
+  this.init_msg();
+  elem = document.getElementById(this.id);
+  elem.style.borderRadius = "50%"
+  elem.addEventListener("mousedown", () => {
+    console.log(`${this.id} is being clicked`);
+    this.isClicked = true;
+  });
+  elem.addEventListener("touchstart", () => {
+    console.log(`${this.id} is being touched`);
+    this.isClicked = true;
+  });
+
+  document.addEventListener("mousemove", () => {
+    if (this.isClicked) {
+      this.followMouse();
+      if (this.state === "attack") {
+        this.ballFollow();
+        if (this.holdBall) {
+          var e = document.getElementById("dump");
+          opt = e.options[e.selectedIndex].value;
+          if (opt === "1") { // check if dumping set to true
+            this.dump();  // check for collision with deefender and dump
+          }
+        }
+      };
+    }
+  })
+
+  document.addEventListener("touchmove", () => {
+    if (this.isClicked) {
+      this.followMouse();
+      if (this.state === "attack") {
+        this.ballFollow();
+        if (this.holdBall) {
+          this.dump(); // check for collision with deefender and dump
+        }
+      };
+      console.log("follwing touch")
+    }
+  })
+
+  document.addEventListener("mouseup", () => {
+    this.isClicked = false;
+    console.log(`${this.id} is no longer being clicked`);
+    document.getElementById(this.id).style.boxShadow = "0px 0px 0px";
+  })
+
+  document.addEventListener("touchend", () => {
+    this.isClicked = false;
+    console.log(`${this.id} is no longer being touched`);
+    document.getElementById(this.id).style.boxShadow = "0px 0px 0px";
+  })
+  //setInterval(this.follow_mouse(), 10)
+  //setInterval(this.move(), 10);
+};
+
+this.init()
 };
 
 var playerCount = 0;
@@ -669,7 +699,7 @@ function updateCanvas() {
   elem.style.width = width + "px";
   layer.style.height = height + "px";
   layer.style.width = width + "px";
-  
+
 };
 
 function createTeam() {
@@ -743,6 +773,12 @@ function toggleFrame() {
 
 };
 
+function animate(){
+  attackArr.forEach(a=>{a.animate()})
+  defendkArr.forEach(a=>{a.animate()})
+  playerkArr.forEach(a=>{a.animate()})
+
+}
 
 
 

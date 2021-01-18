@@ -71,6 +71,7 @@ export default class extends AbstractView{
                 <option value = 2>False</options>
             </select>
             <button type = "buttons" id = "toggleFrame" onchange = "toggleFrame()" ></button>
+            <button type = "buttons" id = "animate" onclick="animate()"></button>
         </div>
        
 ` ;
