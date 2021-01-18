@@ -17,7 +17,11 @@ function PlayerObject(id, pos_x, pos_y, state) {
   this.strokes = []
   this.prev = null;
   this.iterator = 0;
-
+  this.startX = 0;
+  this.startY = 0;
+  this.endX = 0;
+  this.endY = 0;
+  this.transformList = [];// this should hold the start end end coordionates of every frame[[[Xstart1, Ystart1], [Xend1, Yend1]],[[Xstart2, Ystart2], [Xend2, Yend2] .....]
 
   this.init_msg = function () {
     console.log(`player ${this.id} is initialised at position x = ${this.pos_x}, y = ${this.pos_y}`);
@@ -232,8 +236,10 @@ function PlayerObject(id, pos_x, pos_y, state) {
       corner.forEach(e => {
         var top = parseInt(document.getElementById(`defend${e}`).style.top, 10);
         var left = parseInt(document.getElementById(`defend${e}`).style.left, 10);
-        var y_func = () => {
-
+        
+        var y_func = () => { // check if the player is heading out of the canvas
+                            //  if it does return the
+          
           if (ref + y < 0) {
             return -top
           } else {
@@ -371,17 +377,21 @@ function PlayerObject(id, pos_x, pos_y, state) {
     elem.addEventListener("mousemove", onDrag);
     var newpath = document.createElementNS('http://www.w3.org/2000/svg', "path");
     var newtrace = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-    newpath.id = `path${this.pathCount}`;
+    newpath.id = `path${this.pathCount}_${this.id}`;
     newpath.classList.add(`path${this.pathCount}`);
     newpath.classList.add(`${this.id}`);
-    newtrace.id = `trace${this.traceCount}`;
+    newpath.style.position = "absolute";
+    newtrace.id = `trace${this.traceCount}_${this.id}`;
     newtrace.classList.add(`trace${this.traceCount}`);
     newtrace.classList.add(`${this.id}`);
+    newtrace.style.position = "absolute";
 
     canvas.appendChild(newpath);
     canvas.appendChild(newtrace);
-    var x = Mouseposition.x;
-    var y = Mouseposition.y;
+    var x = Mouseposition.x - offsetLayerLeft;
+    var y = Mouseposition.y - offsetLayerTop;
+    this.startX = Mouseposition.x ;
+    this.startY = Mouseposition.y ;
 
     newpath.setAttribute("stroke", "white");
     newpath.setAttribute("stroke-width", "5");
@@ -411,9 +421,10 @@ function PlayerObject(id, pos_x, pos_y, state) {
   this.onDrag = function () {
     // var newpath = document.getElementById(`path${this.pathCount-1}`);
     console.log("dragging")
-    var newtrace = document.getElementById(`trace${this.traceCount - 1}`);
-    var x = Mouseposition.x;
-    var y = Mouseposition.y;
+    var newtrace = document.getElementById(`trace${this.traceCount - 1}_${this.id}`);
+
+    var x = Mouseposition.x - offsetLayerLeft; //minus because Mouseposition returns absolute position
+    var y = Mouseposition.y - offsetLayerTop; // and the path and trace coordinates are with respect to the canvas
 
     var stroke = {
       x: x,
@@ -424,20 +435,26 @@ function PlayerObject(id, pos_x, pos_y, state) {
     this.strokes.push(stroke);
     this.points.push(x, y);
     newtrace.setAttribute("points", this.points);
+    // newtrace.style.position = "absolute"
 
   };
 
   this.onEnd = function () {
     console.log("end");
+    var x = Mouseposition.x - offsetLayerLeft;
+    var y = Mouseposition.y - offsetLayerTop;
+    this.endX = Mouseposition.x ;
+    this.endY = Mouseposition.y ;
+    this.transformList.push([[this.startX, this.startY],[this.endX,this.endY]])
     var elem = document.getElementById(this.id);
-    var canvas = canvas = document.getElementById("layer1");
-    var newpath = document.getElementById(`path${this.pathCount - 1}`);
-    var newtrace = document.getElementById(`trace${this.traceCount - 1}`);
+    // var canvas = document.getElementById("layer1");
+    var newpath = document.getElementById(`path${this.pathCount - 1}_${this.id}`);
+    var newtrace = document.getElementById(`trace${this.traceCount - 1}_${this.id}`);
     newpath.setAttribute("d", this.solve(this.points));
     newtrace.setAttribute("points", "");
+    // newpath.style.position = "absolute"
     elem.removeEventListener("mousemove", onDrag);
     elem.removeEventListener("mouseup", onEnd);
-
     console.log("removed")
 
   };
@@ -480,29 +497,52 @@ function PlayerObject(id, pos_x, pos_y, state) {
 
   this.animate = function(){
     if (this.pathCount > 0) {
+      var foo = async () =>{
+        console.log("running foo")
+        elem = document.getElementById(`${this.id}`);
+        elem.style.left = 0 //this.transformList[this.iterator][0][0]*0 - offsetLayerLeft + "px";
+        elem.style.top =  0 //this.transformList[this.iterator][0][1]*0 - offsetLayerTop  + "px";
+        console.log("finsihed running foo")
+      };
+      foo();
+      
       console.log("animating");
       // var path = anime.path(".screen path");//class of div that contains the 
-      var path = anime.path(`#path${this.iterator}`);
+      var path = anime.path(`#path${this.iterator}_${this.id}`);
       anime({
         targets: `#${this.id}`,
         translateX: path('x'),
         translateY: path('y'),
         // rotate: path('angle'),
         easing: 'linear',
-        duration: 2000,
+        duration: 1000,
         loop: false,
       });
-      if (iterator + 1 === pathCount) {
-        iterator = 0
+      setTimeout(()=>{
+        
+        var transform = elem.style.transform;
+        var transform_ls = transform.split(" ");
+        var transX =  parseInt(transform_ls[0].split("(")[1],10);
+        var transY = parseInt(transform_ls[1].split("(")[1],10);
+        var left = parseInt(elem.style.left,10) + transX + "px";
+        var top = parseInt(elem.style.top,10) + transY + "px";
+        elem.style.left = this.transformList[this.iterator][1][0] - offsetLayerLeft + "px"; 
+        elem.style.top  = this.transformList[this.iterator][1][1] - offsetLayerTop  + "px";
+        elem.style.transform = "translateX(0px) translateY(0px)";
+
+      },1500)
+      
+
+      if (this.iterator + 1 === this.pathCount) {
+        this.iterator = 0;
+        
       }
       else {
-        iterator += 1
+        this.iterator += 1
       };
     };
   };
-
-
-
+  //need to change the element's transfrom to 0 and set its style.left and style.top to the new transformed location
 
 
 this.init = function () {
@@ -566,13 +606,8 @@ this.init = function () {
 this.init()
 };
 
-var playerCount = 0;
-var attackCount = 0;
-var defendCount = 0;
-var playerArr = [];
-var defendArr = [];
+//***************************************************GLOBAL FUNCTIONS ****************************************/
 
-var attackArr = [];
 
 function createPlayer() {
   posx = (100 / 6) * (playerCount % 6);
@@ -722,21 +757,6 @@ function createTeam() {
   }
 };
 
-
-
-//*********************************VARIABLES */
-
-var Mouseposition = {
-  x: 0,
-  y: 0
-};
-
-
-
-var hasBall = false;
-
-frameOn = false;
-
 function toggleFrame() {
   console.log("toggling frame")
   var e = document.getElementById("frameOn");
@@ -773,12 +793,40 @@ function toggleFrame() {
 
 };
 
-function animate(){
-  attackArr.forEach(a=>{a.animate()})
-  defendkArr.forEach(a=>{a.animate()})
-  playerkArr.forEach(a=>{a.animate()})
+function runAnimate(){
+  attackArr.forEach(a=>{a.animate()});
+  defendArr.forEach(a=>{a.animate()});
+  playerArr.forEach(a=>{a.animate()});
 
+};
+
+function init_offsetLayer(){ // to intialise the value only after the element is loaded so as not to calla mthod on a null object
+  offsetLayerTop = document.getElementById("layer1").getBoundingClientRect().top
+  offsetLayerLeft = document.getElementById("layer1").getBoundingClientRect().left
 }
+
+
+//*********************************VARIABLES */******************************************** */
+var playerCount = 0;
+var attackCount = 0;
+var defendCount = 0;
+var playerArr = [];
+var defendArr = [];
+var attackArr = [];
+
+var Mouseposition = {
+  x: 0,
+  y: 0
+};
+
+
+var hasBall = false;
+var frameOn = false;
+
+
+
+
+
 
 
 

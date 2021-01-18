@@ -19,7 +19,7 @@ export default class extends AbstractView{
             This is the Home Page
         </p>
         <div id = "canvas" class = "canvas">
-        <svg id = "layer1"></svg>
+        <svg id = "layer1" onload = "init_offsetLayer()"></svg>
         </div>
         </br>
         <div id = "buttons" class = 'buttons'>
@@ -70,8 +70,10 @@ export default class extends AbstractView{
                 <option value = 1>True</options>
                 <option value = 2>False</options>
             </select>
+            </br>
             <button type = "buttons" id = "toggleFrame" onchange = "toggleFrame()" ></button>
-            <button type = "buttons" id = "animate" onclick="animate()"></button>
+            </br>
+            <button type = "buttons" id = "animate" onclick="runAnimate()">animate</button>
         </div>
        
 ` ;
