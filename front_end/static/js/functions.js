@@ -236,10 +236,10 @@ function PlayerObject(id, pos_x, pos_y, state) {
       corner.forEach(e => {
         var top = parseInt(document.getElementById(`defend${e}`).style.top, 10);
         var left = parseInt(document.getElementById(`defend${e}`).style.left, 10);
-        
+
         var y_func = () => { // check if the player is heading out of the canvas
-                            //  if it does return the
-          
+          //  if it does return the
+
           if (ref + y < 0) {
             return -top
           } else {
@@ -358,40 +358,47 @@ function PlayerObject(id, pos_x, pos_y, state) {
   this.frameOn = function () {
     console.log("frame on")
     var elem = document.getElementById(this.id);
-    elem.addEventListener("mousedown", () => { this.onPress() });
+    elem.addEventListener("mousedown", onPress);
   };
 
   this.frameOff = function () {
     var elem = document.getElementById(this.id);
-    elem.removeEventListener("mousedown", () => { this.onPress() });
+    elem.removeEventListener("mousedown", onPress);
   };
 
   let onDrag = () => { this.onDrag(); };
   let onEnd = () => { this.onEnd(); };
+  let onPress = () => { this.onPress(); };
 
   this.onPress = function () {
     console.log('pressing')
     var canvas = canvas = document.getElementById("layer1");
     var elem = document.getElementById(this.id);
+    var offsetLayerLeft = canvas.getBoundingClientRect().left
+    var offsetLayerTop = canvas.getBoundingClientRect().top
+
     elem.addEventListener("mouseup", onEnd);
     elem.addEventListener("mousemove", onDrag);
     var newpath = document.createElementNS('http://www.w3.org/2000/svg', "path");
     var newtrace = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+    
     newpath.id = `path${this.pathCount}_${this.id}`;
     newpath.classList.add(`path${this.pathCount}`);
     newpath.classList.add(`${this.id}`);
-    newpath.style.position = "absolute";
+    newpath.classList.add("path");
+    // newpath.style.position = "absolute";
     newtrace.id = `trace${this.traceCount}_${this.id}`;
     newtrace.classList.add(`trace${this.traceCount}`);
     newtrace.classList.add(`${this.id}`);
-    newtrace.style.position = "absolute";
+    newtrace.classList.add("trace");
+    // newtrace.style.position = "absolute";
 
     canvas.appendChild(newpath);
     canvas.appendChild(newtrace);
     var x = Mouseposition.x - offsetLayerLeft;
     var y = Mouseposition.y - offsetLayerTop;
-    this.startX = Mouseposition.x ;
-    this.startY = Mouseposition.y ;
+    this.startX = Mouseposition.x;
+    this.startY = Mouseposition.y;
 
     newpath.setAttribute("stroke", "white");
     newpath.setAttribute("stroke-width", "5");
@@ -422,6 +429,9 @@ function PlayerObject(id, pos_x, pos_y, state) {
     // var newpath = document.getElementById(`path${this.pathCount-1}`);
     console.log("dragging")
     var newtrace = document.getElementById(`trace${this.traceCount - 1}_${this.id}`);
+    var canvas = document.getElementById("layer1");
+    var offsetLayerLeft = canvas.getBoundingClientRect().left
+    var offsetLayerTop = canvas.getBoundingClientRect().top
 
     var x = Mouseposition.x - offsetLayerLeft; //minus because Mouseposition returns absolute position
     var y = Mouseposition.y - offsetLayerTop; // and the path and trace coordinates are with respect to the canvas
@@ -441,15 +451,17 @@ function PlayerObject(id, pos_x, pos_y, state) {
 
   this.onEnd = function () {
     console.log("end");
-    var x = Mouseposition.x - offsetLayerLeft;
-    var y = Mouseposition.y - offsetLayerTop;
-    this.endX = Mouseposition.x ;
-    this.endY = Mouseposition.y ;
-    this.transformList.push([[this.startX, this.startY],[this.endX,this.endY]])
     var elem = document.getElementById(this.id);
-    // var canvas = document.getElementById("layer1");
+    var canvas = document.getElementById("layer1");
     var newpath = document.getElementById(`path${this.pathCount - 1}_${this.id}`);
     var newtrace = document.getElementById(`trace${this.traceCount - 1}_${this.id}`);
+    var offsetLayerLeft = canvas.getBoundingClientRect().left
+    var offsetLayerTop = canvas.getBoundingClientRect().top
+    var x = Mouseposition.x - offsetLayerLeft;
+    var y = Mouseposition.y - offsetLayerTop;
+    this.endX = Mouseposition.x;
+    this.endY = Mouseposition.y;
+    this.transformList.push([[this.startX, this.startY], [this.endX, this.endY]])
     newpath.setAttribute("d", this.solve(this.points));
     newtrace.setAttribute("points", "");
     // newpath.style.position = "absolute"
@@ -495,17 +507,17 @@ function PlayerObject(id, pos_x, pos_y, state) {
   };
 
 
-  this.animate = function(){
+  this.animate = function () {
     if (this.pathCount > 0) {
-      var foo = async () =>{
+      var foo = async () => {
         console.log("running foo")
         elem = document.getElementById(`${this.id}`);
         elem.style.left = 0 //this.transformList[this.iterator][0][0]*0 - offsetLayerLeft + "px";
-        elem.style.top =  0 //this.transformList[this.iterator][0][1]*0 - offsetLayerTop  + "px";
+        elem.style.top = 0 //this.transformList[this.iterator][0][1]*0 - offsetLayerTop  + "px";
         console.log("finsihed running foo")
       };
       foo();
-      
+
       console.log("animating");
       // var path = anime.path(".screen path");//class of div that contains the 
       var path = anime.path(`#path${this.iterator}_${this.id}`);
@@ -518,26 +530,38 @@ function PlayerObject(id, pos_x, pos_y, state) {
         duration: 1000,
         loop: false,
       });
-      setTimeout(()=>{
-        
-        var transform = elem.style.transform;
-        var transform_ls = transform.split(" ");
-        var transX =  parseInt(transform_ls[0].split("(")[1],10);
-        var transY = parseInt(transform_ls[1].split("(")[1],10);
-        var left = parseInt(elem.style.left,10) + transX + "px";
-        var top = parseInt(elem.style.top,10) + transY + "px";
-        elem.style.left = this.transformList[this.iterator][1][0] - offsetLayerLeft + "px"; 
-        elem.style.top  = this.transformList[this.iterator][1][1] - offsetLayerTop  + "px";
-        elem.style.transform = "translateX(0px) translateY(0px)";
 
-      },1500)
-      
-
-      if (this.iterator + 1 === this.pathCount) {
-        this.iterator = 0;
+      async function transform() {
+        return new Promise(
+          resolve => {
+            setTimeout(() => {
+              console.log("staring of timeout function");
+              var transform = elem.style.transform;
+              var transform_ls = transform.split(" ");
+              // var transX =  parseInt(transform_ls[0].split("(")[1],10);
+              // var transY = parseInt(transform_ls[1].split("(")[1],10);
+              // var left = parseInt(elem.style.left,10) + transX + "px";
+              // var top = parseInt(elem.style.top,10) + transY + "px";
+              elem.style.left = this.transformList[this.iterator][1][0] - offsetLayerLeft + "px";
+              elem.style.top = this.transformList[this.iterator][1][1] - offsetLayerTop + "px";
+              elem.style.transform = "translateX(0px) translateY(0px)";
+              console.log("ending timeout function");
+            }, 1500)
+          }
+        )
         
       }
+      transform()
+
+
+
+      if (this.iterator + 1 === this.pathCount) {
+        console.log("changing iterator");
+        this.iterator = 0;
+
+      }
       else {
+        console.log("changing iterator");
         this.iterator += 1
       };
     };
@@ -545,65 +569,65 @@ function PlayerObject(id, pos_x, pos_y, state) {
   //need to change the element's transfrom to 0 and set its style.left and style.top to the new transformed location
 
 
-this.init = function () {
-  this.init_html();
-  this.init_msg();
-  elem = document.getElementById(this.id);
-  elem.style.borderRadius = "50%"
-  elem.addEventListener("mousedown", () => {
-    console.log(`${this.id} is being clicked`);
-    this.isClicked = true;
-  });
-  elem.addEventListener("touchstart", () => {
-    console.log(`${this.id} is being touched`);
-    this.isClicked = true;
-  });
+  this.init = function () {
+    this.init_html();
+    this.init_msg();
+    elem = document.getElementById(this.id);
+    elem.style.borderRadius = "50%"
+    elem.addEventListener("mousedown", () => {
+      console.log(`${this.id} is being clicked`);
+      this.isClicked = true;
+    });
+    elem.addEventListener("touchstart", () => {
+      console.log(`${this.id} is being touched`);
+      this.isClicked = true;
+    });
 
-  document.addEventListener("mousemove", () => {
-    if (this.isClicked) {
-      this.followMouse();
-      if (this.state === "attack") {
-        this.ballFollow();
-        if (this.holdBall) {
-          var e = document.getElementById("dump");
-          opt = e.options[e.selectedIndex].value;
-          if (opt === "1") { // check if dumping set to true
-            this.dump();  // check for collision with deefender and dump
+    document.addEventListener("mousemove", () => {
+      if (this.isClicked) {
+        this.followMouse();
+        if (this.state === "attack") {
+          this.ballFollow();
+          if (this.holdBall) {
+            var e = document.getElementById("dump");
+            opt = e.options[e.selectedIndex].value;
+            if (opt === "1") { // check if dumping set to true
+              this.dump();  // check for collision with deefender and dump
+            }
           }
-        }
-      };
-    }
-  })
+        };
+      }
+    })
 
-  document.addEventListener("touchmove", () => {
-    if (this.isClicked) {
-      this.followMouse();
-      if (this.state === "attack") {
-        this.ballFollow();
-        if (this.holdBall) {
-          this.dump(); // check for collision with deefender and dump
-        }
-      };
-      console.log("follwing touch")
-    }
-  })
+    document.addEventListener("touchmove", () => {
+      if (this.isClicked) {
+        this.followMouse();
+        if (this.state === "attack") {
+          this.ballFollow();
+          if (this.holdBall) {
+            this.dump(); // check for collision with deefender and dump
+          }
+        };
+        console.log("follwing touch")
+      }
+    })
 
-  document.addEventListener("mouseup", () => {
-    this.isClicked = false;
-    console.log(`${this.id} is no longer being clicked`);
-    document.getElementById(this.id).style.boxShadow = "0px 0px 0px";
-  })
+    document.addEventListener("mouseup", () => {
+      this.isClicked = false;
+      console.log(`${this.id} is no longer being clicked`);
+      document.getElementById(this.id).style.boxShadow = "0px 0px 0px";
+    })
 
-  document.addEventListener("touchend", () => {
-    this.isClicked = false;
-    console.log(`${this.id} is no longer being touched`);
-    document.getElementById(this.id).style.boxShadow = "0px 0px 0px";
-  })
-  //setInterval(this.follow_mouse(), 10)
-  //setInterval(this.move(), 10);
-};
+    document.addEventListener("touchend", () => {
+      this.isClicked = false;
+      console.log(`${this.id} is no longer being touched`);
+      document.getElementById(this.id).style.boxShadow = "0px 0px 0px";
+    })
+    //setInterval(this.follow_mouse(), 10)
+    //setInterval(this.move(), 10);
+  };
 
-this.init()
+  this.init()
 };
 
 //***************************************************GLOBAL FUNCTIONS ****************************************/
@@ -718,7 +742,7 @@ function updateCanvas() {
   var height;
   switch (opt) {
     case "1":
-      width = 1000;
+      width = 800;
       height = (width / 5) * 7;
       break;
     case "2":
@@ -793,17 +817,17 @@ function toggleFrame() {
 
 };
 
-function runAnimate(){
-  attackArr.forEach(a=>{a.animate()});
-  defendArr.forEach(a=>{a.animate()});
-  playerArr.forEach(a=>{a.animate()});
+function runAnimate() {
+  attackArr.forEach(a => { a.animate() });
+  defendArr.forEach(a => { a.animate() });
+  playerArr.forEach(a => { a.animate() });
 
 };
 
-function init_offsetLayer(){ // to intialise the value only after the element is loaded so as not to calla mthod on a null object
-  offsetLayerTop = document.getElementById("layer1").getBoundingClientRect().top
-  offsetLayerLeft = document.getElementById("layer1").getBoundingClientRect().left
-}
+// function init_offsetLayer() { // to intialise the value only after the element is loaded so as not to calla mthod on a null object
+//   offsetLayerTop = document.getElementById("layer1").getBoundingClientRect().top
+//   offsetLayerLeft = document.getElementById("layer1").getBoundingClientRect().left
+// }
 
 
 //*********************************VARIABLES */******************************************** */

@@ -1,6 +1,6 @@
 #canvas{
-    width: 1000px;
-     height: 1000px;
+    width: 800px;
+     height: (800/5)*7px;
      position: relative;
      background: gray;
      touch-action: none;
@@ -50,4 +50,14 @@ a {
 
 }
 
+.trace{
+  position: absolute;
+}
 
+.path{
+  position:absolute;
+}
+
+#buttons{
+  position: absolute;
+}

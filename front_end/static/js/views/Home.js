@@ -19,7 +19,7 @@ export default class extends AbstractView{
             This is the Home Page
         </p>
         <div id = "canvas" class = "canvas">
-        <svg id = "layer1" onload = "init_offsetLayer()"></svg>
+        <svg id = "layer1"></svg>
         </div>
         </br>
         <div id = "buttons" class = 'buttons'>
