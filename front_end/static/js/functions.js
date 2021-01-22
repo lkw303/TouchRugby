@@ -372,10 +372,10 @@ function PlayerObject(id, pos_x, pos_y, state) {
 
   this.onPress = function () {
     console.log('pressing')
-    var canvas = canvas = document.getElementById("layer1");
+    var canvas = document.getElementById("layer1");
     var elem = document.getElementById(this.id);
-    var offsetLayerLeft = canvas.getBoundingClientRect().left
-    var offsetLayerTop = canvas.getBoundingClientRect().top
+    var offsetLayerLeft = canvas.getBoundingClientRect().left;
+    var offsetLayerTop = canvas.getBoundingClientRect().top;
 
     elem.addEventListener("mouseup", onEnd);
     elem.addEventListener("mousemove", onDrag);
@@ -509,14 +509,13 @@ function PlayerObject(id, pos_x, pos_y, state) {
 
   this.animate = function () {
     if (this.pathCount > 0) {
-      var foo = async () => {
-        console.log("running foo")
+      var animeInit = async () => {
+        document.getElementById("animate").disabled = true;
         elem = document.getElementById(`${this.id}`);
         elem.style.left = 0 //this.transformList[this.iterator][0][0]*0 - offsetLayerLeft + "px";
         elem.style.top = 0 //this.transformList[this.iterator][0][1]*0 - offsetLayerTop  + "px";
-        console.log("finsihed running foo")
       };
-      foo();
+      animeInit();
 
       console.log("animating");
       // var path = anime.path(".screen path");//class of div that contains the 
@@ -531,29 +530,32 @@ function PlayerObject(id, pos_x, pos_y, state) {
         loop: false,
       });
 
-      async function transform() {
+
+      async function transform(id,iterator,transformList) {
         return new Promise(
           resolve => {
             setTimeout(() => {
-              console.log("staring of timeout function");
-              var transform = elem.style.transform;
-              var transform_ls = transform.split(" ");
+              elem = document.getElementById(id);
+              var canvas =  document.getElementById("layer1");          
+              var offsetLayerLeft = canvas.getBoundingClientRect().left;
+              var offsetLayerTop = canvas.getBoundingClientRect().top;  
+              // var transform = elem.style.transform;
+              // var transform_ls = transform.split(" ");
               // var transX =  parseInt(transform_ls[0].split("(")[1],10);
               // var transY = parseInt(transform_ls[1].split("(")[1],10);
               // var left = parseInt(elem.style.left,10) + transX + "px";
               // var top = parseInt(elem.style.top,10) + transY + "px";
-              elem.style.left = this.transformList[this.iterator][1][0] - offsetLayerLeft + "px";
-              elem.style.top = this.transformList[this.iterator][1][1] - offsetLayerTop + "px";
+              elem.style.left = transformList[iterator][1][0] - offsetLayerLeft + "px";
+              elem.style.top = transformList[iterator][1][1] - offsetLayerTop + "px";
               elem.style.transform = "translateX(0px) translateY(0px)";
               console.log("ending timeout function");
-            }, 1500)
+              document.getElementById("animate").disabled = false;
+            }, 1100)
           }
         )
         
-      }
-      transform()
-
-
+      };
+      transform(this.id, this.iterator, this.transformList)
 
       if (this.iterator + 1 === this.pathCount) {
         console.log("changing iterator");
@@ -824,11 +826,6 @@ function runAnimate() {
 
 };
 
-// function init_offsetLayer() { // to intialise the value only after the element is loaded so as not to calla mthod on a null object
-//   offsetLayerTop = document.getElementById("layer1").getBoundingClientRect().top
-//   offsetLayerLeft = document.getElementById("layer1").getBoundingClientRect().left
-// }
-
 
 //*********************************VARIABLES */******************************************** */
 var playerCount = 0;
@@ -849,62 +846,3 @@ var frameOn = false;
 
 
 
-
-
-
-
-
-
-  // function myMove() {
-  //   var elem = document.getElementById("animation");
-  //   var pos = 0;
-  //   var id = setInterval(frame, 10);
-  //   function frame() {
-  //     if (pos == 350) {
-  //       clearInterval(id);
-  //     } else {
-  //       pos++;
-  //       elem.style.top = pos + 'px';
-  //       elem.style.left = pos + 'px';
-  //     }
-  //   }
-  // };
-
-  // function myMove2() {
-  //   var elem = document.getElementById("animation2");
-  //   var pos_h = elem.offsetLeft;
-  //   var pos_v = elem.offsetTop;
-  //   console.log(`initial pos for anim2 is ${pos_v}`)
-  //   console.log(`initial pos for anim2 is ${pos_h}`) 
-  //   var id = setInterval(frame, 100);
-  //   function frame() {
-  //     if (pos_h == 350) {
-  //       clearInterval(id);
-  //     } else {
-  //       pos_h++;
-  //       pos_v++;
-  //       elem.style.top = pos_v + 'px';
-  //       elem.style.left = pos_h + 'px';
-  //     }
-  //   }
-  // };
-
-
-  // function myMove3() {
-  //   var elem = document.getElementById("animation3");
-  //   var pos_h = elem.offsetLeft;
-  //   var pos_v = elem.offsetTop;
-  //   console.log(`initial pos for anim3 is ${pos_v}`)
-  //   console.log(`initial pos for anim3 is ${pos_h}`) 
-  //   var id = setInterval(frame, 10);
-  //   function frame() {
-  //     if (pos_h == 350) {
-  //       clearInterval(id);
-  //     } else {
-  //       pos_h++;
-  //       pos_v++;
-  //       elem.style.top = pos_v + 'px';
-  //       elem.style.left = pos_h + 'px';
-  //     }
-  //   }
-  // };
