@@ -7,7 +7,7 @@ function PlayerObject(id, pos_x, pos_y, state) {
   this.init_pos_x = pos_x;
   this.init_pos_y = pos_y;
   this.pos_history = [[pos_x, pos_y]];
-  this.state = state; // attacking or defending
+  this.state = state; // attacking or defending or player
   this.isClicked = false;
   this.holdBall = false;
   this.isTouched = false;
@@ -22,7 +22,7 @@ function PlayerObject(id, pos_x, pos_y, state) {
   this.endX = 0;
   this.endY = 0;
   this.transformList = [];// this should hold the start end end coordionates of every frame[[[Xstart1, Ystart1], [Xend1, Yend1]],[[Xstart2, Ystart2], [Xend2, Yend2] .....]
-
+  this.frameCount = 0;
   this.init_msg = function () {
     console.log(`player ${this.id} is initialised at position x = ${this.pos_x}, y = ${this.pos_y}`);
   };
@@ -38,16 +38,6 @@ function PlayerObject(id, pos_x, pos_y, state) {
     div.style.width = "50px";
     div.style.height = "50px";
     div.style.background = "black";
-    /*
-    div.background = function getRandomColor() {
-      var letters = '0123456789ABCDEF';
-      var color = '#';
-      for (var i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-      }
-      return color;
-    };
-    */
     document.getElementById("canvas").appendChild(div);
   };
 
@@ -425,6 +415,7 @@ function PlayerObject(id, pos_x, pos_y, state) {
     this.traceCount += 1
 
   };
+
   this.onDrag = function () {
     // var newpath = document.getElementById(`path${this.pathCount-1}`);
     console.log("dragging")
@@ -459,15 +450,22 @@ function PlayerObject(id, pos_x, pos_y, state) {
     var offsetLayerTop = canvas.getBoundingClientRect().top
     var x = Mouseposition.x - offsetLayerLeft;
     var y = Mouseposition.y - offsetLayerTop;
-    this.endX = Mouseposition.x;
-    this.endY = Mouseposition.y;
+    // var transform = elem.style.transform;
+    // var transform_ls = transform.split(" ");
+    // var transX =  parseInt(transform_ls[0].split("(")[1],10);
+    // var transY = parseInt(transform_ls[1].split("(")[1],10);
+    // this.endX = transX;
+    // this.endY = transY;
+    // this.endX = Mouseposition.x;
+    // this.endY = Mouseposition.y;
     this.transformList.push([[this.startX, this.startY], [this.endX, this.endY]])
     newpath.setAttribute("d", this.solve(this.points));
     newtrace.setAttribute("points", "");
     // newpath.style.position = "absolute"
     elem.removeEventListener("mousemove", onDrag);
     elem.removeEventListener("mouseup", onEnd);
-    console.log("removed")
+    console.log("removed");
+    this.addFrame();
 
   };
 
@@ -539,14 +537,16 @@ function PlayerObject(id, pos_x, pos_y, state) {
               var canvas =  document.getElementById("layer1");          
               var offsetLayerLeft = canvas.getBoundingClientRect().left;
               var offsetLayerTop = canvas.getBoundingClientRect().top;  
-              // var transform = elem.style.transform;
-              // var transform_ls = transform.split(" ");
-              // var transX =  parseInt(transform_ls[0].split("(")[1],10);
-              // var transY = parseInt(transform_ls[1].split("(")[1],10);
+              var transform = elem.style.transform;
+              var transform_ls = transform.split(" ");
+              var transX =  parseInt(transform_ls[0].split("(")[1],10);
+              var transY = parseInt(transform_ls[1].split("(")[1],10);
               // var left = parseInt(elem.style.left,10) + transX + "px";
               // var top = parseInt(elem.style.top,10) + transY + "px";
-              elem.style.left = transformList[iterator][1][0] - offsetLayerLeft + "px";
-              elem.style.top = transformList[iterator][1][1] - offsetLayerTop + "px";
+              elem.style.left = transX + "px"
+              elem.style.top = transY + "px"
+              // elem.style.left = transformList[iterator][1][0] - offsetLayerLeft + "px";
+              // elem.style.top = transformList[iterator][1][1] - offsetLayerTop + "px";  
               elem.style.transform = "translateX(0px) translateY(0px)";
               console.log("ending timeout function");
               document.getElementById("animate").disabled = false;
@@ -570,10 +570,30 @@ function PlayerObject(id, pos_x, pos_y, state) {
   };
   //need to change the element's transfrom to 0 and set its style.left and style.top to the new transformed location
 
+  this.createFrameThread = function(){ //adds a column to the sidebar and tracks the frames of the player
+    var div = document.createElement("DIV");
+    var list = document.createElement("UL");
+    div.id = `thread_${this.id}`;
+    list.id = `list_${this.id}`
+    var sidebar = document.getElementById("sidebar");
+    div.appendChild(list);
+    sidebar.appendChild(div);
+  };
+
+  this.addFrame = function(){
+    var frame = document.createElement("LI");
+    frame.id = `frame${this.pathCount}_${this.id}`;
+    frame.classList.add(`frame`);
+    frame.classList.add(`frame${this.frameCount}`);
+    var thread = document.getElementById(`list_${this.id}`);
+    thread.appendChild(frame);
+    this.frameCount += 0;
+  }
 
   this.init = function () {
     this.init_html();
     this.init_msg();
+    this.createFrameThread();
     elem = document.getElementById(this.id);
     elem.style.borderRadius = "50%"
     elem.addEventListener("mousedown", () => {
@@ -632,6 +652,10 @@ function PlayerObject(id, pos_x, pos_y, state) {
   this.init()
 };
 
+
+
+
+
 //***************************************************GLOBAL FUNCTIONS ****************************************/
 
 
@@ -680,7 +704,7 @@ function createBall() {
     console.log("there is already a ball");
   }
 
-};
+};cd
 
 function removePlayer() {
   if (playerCount >= 1) {
@@ -720,7 +744,7 @@ function removeBall() {
     document.getElementById("ball0").remove();
     hasBall = false;
   }
-}
+};
 
 document.addEventListener('mousemove', function (e) {
   Mouseposition.x = e.clientX;
@@ -825,6 +849,27 @@ function runAnimate() {
   playerArr.forEach(a => { a.animate() });
 
 };
+
+function openCity(evt, cityName) {
+  // Declare all variables
+  var i, tabcontent, tablinks;
+
+  // Get all elements with class="tabcontent" and hide them
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+
+  // Get all elements with class="tablinks" and remove the class "active"
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+
+  // Show the current tab, and add an "active" class to the button that opened the tab
+  document.getElementById(cityName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
 
 
 //*********************************VARIABLES */******************************************** */

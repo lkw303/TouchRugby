@@ -1,3 +1,6 @@
+// const fs = require("fs");
+// const path = require("path");
+//for future use when I figure out browserify
 import AbstractView from "./Abstractview.js";
 
 
@@ -7,10 +10,16 @@ export default class extends AbstractView{
         this.setTitle("Home");
     }
 
+    // async getHtml(){
+    //     var file = fs.readFileSync(path.join(__dirname, "front_end", "html", "Home.html"));
+    //     return file;
+       
+    // };
+
     async getHtml(){
     
         return `
-        
+        <div id = "top">
         <h1> Welcome !</h1>
         <p>
         This App was created to assist in showing different types of plays and tactics in Touch Rugby
@@ -18,10 +27,26 @@ export default class extends AbstractView{
         <p>
             This is the Home Page
         </p>
+        </div>
         <div id = "canvas" class = "canvas">
         <svg id = "layer1"></svg>
         </div>
         </br>
+        <div id ="sidebar" class ="sidebar" >
+        <div class = "tabs">
+        <div>
+        <button class="tablinks" onclick="openTab(event, 'attacker')">Attack</button>
+        <button class="tablinks" onclick="openTab(event, 'defender')">Defenders</button>
+        <button class="tablinks" onclick="openTab(event, 'player')">Players</button>
+        </div>
+        <div id = "attackTab" class= "tabcontent">
+        </div>
+        <div id = "defendTab" class= "tabcontent">
+        </div>
+        <div id = "playerTab" class= "tabcontent">
+        </div>
+        </div>
+        </div>
         <div id = "buttons" class = 'buttons'>
             <button type = "buttons" class = "constructor" id = "constructor" onclick = "createPlayer()"> Create Player</button>
             <button type = "buttons" class = "constructor" id = "constructor" onclick = "createAttack()">Create Attackers</button>
@@ -78,11 +103,5 @@ export default class extends AbstractView{
        
 ` ;
     }
-};
+ };
 
-/*
-<div id = "animation" class = "animation"></div>
-            <div id = "animation2" class = "animation"></div>
-            <div id = "animation3" class = "animation"></div>
-
-*/
