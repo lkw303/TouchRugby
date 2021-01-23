@@ -34,19 +34,23 @@ export default class extends AbstractView{
         </br>
         <div id ="sidebar" class ="sidebar" >
         <div class = "tabs">
+        
         <div>
-        <button class="tablinks" onclick="openTab(event, 'attacker')">Attack</button>
-        <button class="tablinks" onclick="openTab(event, 'defender')">Defenders</button>
-        <button class="tablinks" onclick="openTab(event, 'player')">Players</button>
+        <button class="tablinks" onclick="openTab(event, 'attackTab')">Attack</button>
+        <button class="tablinks" onclick="openTab(event, 'defendTab')">Defenders</button>
+        <button class="tablinks" onclick="openTab(event, 'playerTab')">Players</button>
         </div>
+
         <div id = "attackTab" class= "tabcontent">
         </div>
         <div id = "defendTab" class= "tabcontent">
         </div>
         <div id = "playerTab" class= "tabcontent">
         </div>
+
         </div>
         </div>
+
         <div id = "buttons" class = 'buttons'>
             <button type = "buttons" class = "constructor" id = "constructor" onclick = "createPlayer()"> Create Player</button>
             <button type = "buttons" class = "constructor" id = "constructor" onclick = "createAttack()">Create Attackers</button>

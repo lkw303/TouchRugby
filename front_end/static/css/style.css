@@ -89,7 +89,7 @@ a {
   background: white;
 }
 
-/* tabs */
+/**************** tabs *******************************/
 
 .tab {
   overflow: hidden;
@@ -124,3 +124,18 @@ a {
   padding: 6px 12px;
   border: 1px solid #ccc;
   border-top: none;
+}
+
+
+
+/* #attackTab{
+  display: grid;
+}
+
+#defendTab{
+  display: grid;
+}
+
+#defendTab{
+  display: grid; */
+}

@@ -1,16 +1,23 @@
 function PlayerObject(id, pos_x, pos_y, state) {
   //let player = Object.create(constructorPlayer);
   this.id = state + id;
-  this.index = id
+  this.index = id;
+  this.state = state; // attacking or defending or player
+
   this.pos_x = pos_x;
   this.pos_y = pos_y;
+
+  this.width = null;
+  this.height = null;
+
   this.init_pos_x = pos_x;
   this.init_pos_y = pos_y;
   this.pos_history = [[pos_x, pos_y]];
-  this.state = state; // attacking or defending or player
+  
   this.isClicked = false;
   this.holdBall = false;
   this.isTouched = false;
+
   this.pathCount = 0;
   this.traceCount = 0;
   this.points = []
@@ -23,38 +30,42 @@ function PlayerObject(id, pos_x, pos_y, state) {
   this.endY = 0;
   this.transformList = [];// this should hold the start end end coordionates of every frame[[[Xstart1, Ystart1], [Xend1, Yend1]],[[Xstart2, Ystart2], [Xend2, Yend2] .....]
   this.frameCount = 0;
+
+
   this.init_msg = function () {
-    console.log(`player ${this.id} is initialised at position x = ${this.pos_x}, y = ${this.pos_y}`);
+    // console.log(`player ${this.id} is initialised at position x = ${this.pos_x}, y = ${this.pos_y}`);
   };
 
   this.init_html = function () {
+    var width = 35;
+    var height = 35;
+    this.width = width;
+    this.height = height;
     var div = document.createElement("div");
     div.id = this.id;
     div.className = this.state;
     div.style.position = "absolute"
-    //div.top = pos_y + "%";
     div.style.left = pos_x + "%";
     div.style.top = pos_y + "%"
-    div.style.width = "50px";
-    div.style.height = "50px";
-    div.style.background = "black";
+    div.style.width = width + "px";
+    div.style.height = height + "px";
     document.getElementById("canvas").appendChild(div);
   };
 
   this.followMouse = function () {
     elem = document.getElementById(this.id);
     elem.style.boxShadow = "5px 5px 5px black";
-    var X = (Mouseposition.x - document.getElementById("canvas").getBoundingClientRect().left - 25);
-    var Y = (Mouseposition.y - document.getElementById("canvas").getBoundingClientRect().top - 25);
-    var W = document.getElementById("canvas").getBoundingClientRect().width - 25;
-    var H = document.getElementById("canvas").getBoundingClientRect().height - 25;
+    var X = (Mouseposition.x - document.getElementById("canvas").getBoundingClientRect().left - this.width);
+    var Y = (Mouseposition.y - document.getElementById("canvas").getBoundingClientRect().top - this.height);
+    var W = document.getElementById("canvas").getBoundingClientRect().width - this.width;
+    var H = document.getElementById("canvas").getBoundingClientRect().height - this.height;
 
     if (X <= W && X >= 0 && Y <= H && Y >= 0) {
       elem.style.left = (Mouseposition.x - document.getElementById("canvas").getBoundingClientRect().left - 25) + "px";
       elem.style.top = (Mouseposition.y - document.getElementById("canvas").getBoundingClientRect().top - 25) + "px";
-      console.log("follow mouse function")
+      // console.log("follow mouse function")
     } else {
-      console.log("End of Boundary")
+      // console.log("End of Boundary")
     }
 
     /*
@@ -92,18 +103,18 @@ function PlayerObject(id, pos_x, pos_y, state) {
       var playerY = parseInt(player.style.top, 10) + playerHeight / 2;
       var limX = ballWidth / 2 + playerWidth / 2;
       var limY = ballHeight / 2 + playerHeight / 2;
-      console.log(`limX is ${limX}`);
-      console.log(`limY is ${limY}`);
+      // console.log(`limX is ${limX}`);
+      // console.log(`limY is ${limY}`);
       difX = Math.abs(playerX - ballX);
       difY = Math.abs(playerY - ballY);
-      console.log(`difX is ${difX}`);
-      console.log(`difY is ${difY}`);
+      // console.log(`difX is ${difX}`);
+      // console.log(`difY is ${difY}`);
       if (difX < limX && difY < limY) {
         collision = true;
-        console.log(`collision is ${collision}`)
+        // console.log(`collision is ${collision}`)
         ball.style.left = (playerX - playerWidth / 2 - ballWidth / 2) + "px";
         ball.style.top = (playerY - playerHeight / 2 - ballHeight / 2) + "px";
-        console.log(ball)
+        // console.log(ball)
         this.holdBall = true;
       };
     }
@@ -119,6 +130,7 @@ function PlayerObject(id, pos_x, pos_y, state) {
 
     for (i = 0; i < defendCount; i++) {
       defend = document.getElementById(`defend${i}`);
+      // future can change width to a constant assuming that all players are the same height
       defendHeight = parseInt(defend.style.height, 10);
       defendWidth = parseInt(defend.style.width, 10);
       defendX = parseInt(defend.style.left, 10) + defendWidth / 2;
@@ -571,23 +583,41 @@ function PlayerObject(id, pos_x, pos_y, state) {
   //need to change the element's transfrom to 0 and set its style.left and style.top to the new transformed location
 
   this.createFrameThread = function(){ //adds a column to the sidebar and tracks the frames of the player
+    var tab = document.getElementById(`${this.state}Tab`);
     var div = document.createElement("DIV");
     var list = document.createElement("UL");
+    var templateColumns = "";
+    var templateAreas = ""
+    for (var i = 0; i < (this.id + 1); i++){
+      templateColumns += "1fr ";
+      // templateAreas += `${this.state}${i} `;
+    };
+    tab.style.gridTemplateColumns = templateColumns;
+    // tab.style.gridTemplateAreas = templateAreas;
+    // div.style.gridArea = `${this.id}`;
+    div.style.gridColumn = `${this.index+1}/${this.index+2}`;
     div.id = `thread_${this.id}`;
-    list.id = `list_${this.id}`
-    var sidebar = document.getElementById("sidebar");
+    list.id = `list_${this.id}`;
+    // list.style.gridArea = `${this.id}`;
+    list.style.padding = "10px 10px";
+    // var sidebar = document.getElementById("sidebar");
+    
+    tab.appendChild(div);
     div.appendChild(list);
-    sidebar.appendChild(div);
   };
 
   this.addFrame = function(){
+    // var tab = document.getElementById(`${this.state}Tab`);
+    var list = document.getElementById(`list_${this.id}`);
     var frame = document.createElement("LI");
-    frame.id = `frame${this.pathCount}_${this.id}`;
+    frame.id = `frame${this.frameCount}_${this.id}`;
     frame.classList.add(`frame`);
     frame.classList.add(`frame${this.frameCount}`);
-    var thread = document.getElementById(`list_${this.id}`);
-    thread.appendChild(frame);
-    this.frameCount += 0;
+    frame.setAttribute("onclick", `selectFrame(${this.traceCount},${this.pathCount},${this.index},"${this.state}")`);
+    // var thread = document.getElementById(`list_${this.id}`);
+    // thread.appendChild(frame);
+    list.appendChild(frame);
+    this.frameCount += 1;
   }
 
   this.init = function () {
@@ -595,13 +625,13 @@ function PlayerObject(id, pos_x, pos_y, state) {
     this.init_msg();
     this.createFrameThread();
     elem = document.getElementById(this.id);
-    elem.style.borderRadius = "50%"
+    elem.style.borderRadius = "50%";
     elem.addEventListener("mousedown", () => {
-      console.log(`${this.id} is being clicked`);
+      // console.log(`${this.id} is being clicked`);
       this.isClicked = true;
     });
     elem.addEventListener("touchstart", () => {
-      console.log(`${this.id} is being touched`);
+      // console.log(`${this.id} is being touched`);
       this.isClicked = true;
     });
 
@@ -687,6 +717,7 @@ function createDefend() {
   defendCount++;
 };
 
+// D.R.Y combine the 3 create functions intto 1
 
 function createBall() {
   if (!hasBall) {
@@ -704,7 +735,7 @@ function createBall() {
     console.log("there is already a ball");
   }
 
-};cd
+};
 
 function removePlayer() {
   if (playerCount >= 1) {
@@ -850,7 +881,7 @@ function runAnimate() {
 
 };
 
-function openCity(evt, cityName) {
+function openTab(evt, tabName) {
   // Declare all variables
   var i, tabcontent, tablinks;
 
@@ -867,8 +898,59 @@ function openCity(evt, cityName) {
   }
 
   // Show the current tab, and add an "active" class to the button that opened the tab
-  document.getElementById(cityName).style.display = "block";
+  document.getElementById(tabName).style.display = "grid";
   evt.currentTarget.className += " active";
+}
+
+// possible issue -- this function assumes the selected frame is the last frame added to the stack
+//pathCOunt is increase in onPress therefore the need to minus 1
+function selectFrame(pathCount,traceCount,index,state){
+  frameId = `frame${pathCount-1}_${state}${index}`;
+  pathId = `path${pathCount-1}_${state}${index}`;
+  traceId = `trace${traceCount-1}_${state}${index}`;
+  var frame = document.getElementById(frameId)
+  var path = document.getElementById(pathId);
+  var trace = document.getElementById(traceId);
+
+  if (!frameSelected){
+    frameSelected = true;
+    selectedFrame = frameId;
+    selectedPath = pathId;
+    selectedTrace = traceId;
+    path.setAttribute("stroke", "black");
+    frame.style.background = "gray";
+  }
+  else{
+    var prevFrame = document.getElementById(selectedFrame);
+    var prevPath = document.getElementById(selectedPath);
+    prevFrame.style.background = "white";
+    prevPath.setAttribute("stroke", "white");
+    selectedFrame = frameId;
+    selectedPath = pathId;
+    // var frame = document.getElementById(selectedFrame);
+    // var path = document.getElementById(selectedPath);
+    frame.style.background = "gray";
+    path.setAttribute("stroke", "black");
+  };
+  
+  switch (state){
+    case "attack":
+      attackArr[index].pathCount -= 1;
+      attackArr[index].traceCount -= 1;
+      break;
+
+    case "defend":
+      defendArr[index].pathCount -= 1;
+      defendArr[index].traceCount -= 1;
+      break;
+
+    case "player":
+      playerArr[index].pathCount -= 1;
+      playerArr[index].traceCount -= 1;
+      break;
+  };
+  
+
 }
 
 
@@ -888,6 +970,10 @@ var Mouseposition = {
 
 var hasBall = false;
 var frameOn = false;
+var frameSelected = false;
+var selectedFrame = null;
+var selectedPath = null;
+var selectedTrace = null;
 
 
 
