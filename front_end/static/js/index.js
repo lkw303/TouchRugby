@@ -17,6 +17,7 @@ const router = async () =>{
         {path: "/", view :Home},
         {path: "/about", view :About},
         {path: "/settings", view : Settings},
+        {path: "/examples", view : Examples}
 ];
 
     // location.pathname is the pathname attribute of the location object which shows the current path of the url

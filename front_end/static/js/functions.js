@@ -361,11 +361,13 @@ function PlayerObject(id, pos_x, pos_y, state) {
     console.log("frame on")
     var elem = document.getElementById(this.id);
     elem.addEventListener("mousedown", onPress);
+    elem.addEventListener("touchstart", onPress);
   };
 
   this.frameOff = function () {
     var elem = document.getElementById(this.id);
     elem.removeEventListener("mousedown", onPress);
+    elem.removeEventListener("touchstart", onPress);
   };
 
   let onDrag = () => { this.onDrag(); };
@@ -381,6 +383,8 @@ function PlayerObject(id, pos_x, pos_y, state) {
 
     elem.addEventListener("mouseup", onEnd);
     elem.addEventListener("mousemove", onDrag);
+    elem.addEventListener("touchend", onEnd);
+    elem.addEventListener("touchmove", onDrag);
     var newpath = document.createElementNS('http://www.w3.org/2000/svg', "path");
     var newtrace = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
     
@@ -397,8 +401,10 @@ function PlayerObject(id, pos_x, pos_y, state) {
 
     canvas.appendChild(newpath);
     canvas.appendChild(newtrace);
-    var x = Mouseposition.x - offsetLayerLeft;
-    var y = Mouseposition.y - offsetLayerTop;
+    var x = parseInt(elem.style.left,10)+ this.width;
+    var y = parseInt(elem.style.top,10) + this.height;
+    // var x = Mouseposition.x - offsetLayerLeft;
+    // var y = Mouseposition.y - offsetLayerTop;
     this.startX = Mouseposition.x;
     this.startY = Mouseposition.y;
 
@@ -476,7 +482,8 @@ function PlayerObject(id, pos_x, pos_y, state) {
     // newpath.style.position = "absolute"
     elem.removeEventListener("mousemove", onDrag);
     elem.removeEventListener("mouseup", onEnd);
-    console.log("removed");
+    elem.removeEventListener("touchmove", onDrag);
+    elem.removeEventListener("touchend", onEnd);
     this.addFrame();
 
   };
@@ -530,6 +537,7 @@ function PlayerObject(id, pos_x, pos_y, state) {
       console.log("animating");
       // var path = anime.path(".screen path");//class of div that contains the 
       var path = anime.path(`#path${this.iterator}_${this.id}`);
+      console.log(`animating path path${this.iterator}_${this.id}`)
       anime({
         targets: `#${this.id}`,
         translateX: path('x'),
@@ -578,7 +586,9 @@ function PlayerObject(id, pos_x, pos_y, state) {
         console.log("changing iterator");
         this.iterator += 1
       };
-    };
+    }else{
+      console.log(`${this.id} has non path`)
+    }
   };
   //need to change the element's transfrom to 0 and set its style.left and style.top to the new transformed location
 
@@ -613,7 +623,7 @@ function PlayerObject(id, pos_x, pos_y, state) {
     frame.id = `frame${this.frameCount}_${this.id}`;
     frame.classList.add(`frame`);
     frame.classList.add(`frame${this.frameCount}`);
-    frame.setAttribute("onclick", `selectFrame(${this.traceCount},${this.pathCount},${this.index},"${this.state}")`);
+    frame.setAttribute("onclick", `selectFrame(${this.pathCount},${this.traceCount},${this.index},"${this.state}")`);
     // var thread = document.getElementById(`list_${this.id}`);
     // thread.appendChild(frame);
     list.appendChild(frame);
@@ -657,7 +667,7 @@ function PlayerObject(id, pos_x, pos_y, state) {
         if (this.state === "attack") {
           this.ballFollow();
           if (this.holdBall) {
-            this.dump(); // check for collision with deefender and dump
+            this.dump(); // check for collision with defender and dump
           }
         };
         console.log("follwing touch")
@@ -782,6 +792,16 @@ document.addEventListener('mousemove', function (e) {
   Mouseposition.y = e.clientY;
   //console.log(Mouseposition)
 });
+document.addEventListener('touchstart', function (e) {
+  Mouseposition.x = e.touches[0].clientX;
+  Mouseposition.y = e.touches[0].clientY;
+  //console.log(Mouseposition)
+});
+document.addEventListener('touchend', function (e) {
+  Mouseposition.x = e.touches[0].clientX;
+  Mouseposition.y = e.touches[0].clientY;
+  //console.log(Mouseposition)
+});
 
 document.addEventListener('touchmove', function (e) {
   Mouseposition.x = e.touches[0].clientX;
@@ -875,10 +895,16 @@ function toggleFrame() {
 };
 
 function runAnimate() {
-  attackArr.forEach(a => { a.animate() });
-  defendArr.forEach(a => { a.animate() });
-  playerArr.forEach(a => { a.animate() });
-
+  if(attackArr){
+    attackArr.forEach(a => { a.animate() });
+  }
+  if(defendArr){
+    defendArr.forEach(a => { a.animate() });
+  }
+  if(playerArr){
+    playerArr.forEach(a => { a.animate() });
+  }
+  
 };
 
 function openTab(evt, tabName) {
@@ -903,7 +929,7 @@ function openTab(evt, tabName) {
 }
 
 // possible issue -- this function assumes the selected frame is the last frame added to the stack
-//pathCOunt is increase in onPress therefore the need to minus 1
+//pathCount is increase in onPress therefore the need to minus 1
 function selectFrame(pathCount,traceCount,index,state){
   frameId = `frame${pathCount-1}_${state}${index}`;
   pathId = `path${pathCount-1}_${state}${index}`;
@@ -933,22 +959,22 @@ function selectFrame(pathCount,traceCount,index,state){
     path.setAttribute("stroke", "black");
   };
   
-  switch (state){
-    case "attack":
-      attackArr[index].pathCount -= 1;
-      attackArr[index].traceCount -= 1;
-      break;
+  // switch (state){
+  //   case "attack":
+  //     attackArr[index].pathCount -= 1;
+  //     attackArr[index].traceCount -= 1;
+  //     break;
 
-    case "defend":
-      defendArr[index].pathCount -= 1;
-      defendArr[index].traceCount -= 1;
-      break;
+  //   case "defend":
+  //     defendArr[index].pathCount -= 1;
+  //     defendArr[index].traceCount -= 1;
+  //     break;
 
-    case "player":
-      playerArr[index].pathCount -= 1;
-      playerArr[index].traceCount -= 1;
-      break;
-  };
+  //   case "player":
+  //     playerArr[index].pathCount -= 1;
+  //     playerArr[index].traceCount -= 1;
+  //     break;
+  // };
   
 
 }
