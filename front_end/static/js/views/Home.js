@@ -20,18 +20,10 @@ export default class extends AbstractView{
     
         return `
         <div id = "top">
-        <h1> Welcome !</h1>
-        <p>
-        This App was created to assist in showing different types of plays and tactics in Touch Rugby
-        </p>
-        <p>
-            This is the Home Page
-        </p>
         </div>
         <div id = "canvas" class = "canvas">
         <svg id = "layer1"></svg>
         </div>
-        </br>
         <div id ="sidebar" class ="sidebar" >
         <div class = "tabs">
         
@@ -39,14 +31,19 @@ export default class extends AbstractView{
         <button class="tablinks" onclick="openTab(event, 'attackTab')">Attack</button>
         <button class="tablinks" onclick="openTab(event, 'defendTab')">Defenders</button>
         <button class="tablinks" onclick="openTab(event, 'playerTab')">Players</button>
+        <button class="tablinks" onclick="openTab(event, 'ballTab')">Ball</button>
         </div>
 
         <div id = "attackTab" class= "tabcontent">
+        
         </div>
         <div id = "defendTab" class= "tabcontent">
         </div>
         <div id = "playerTab" class= "tabcontent">
         </div>
+        <div id = "ballTab" class= "tabcontent">
+        </div>
+
 
         </div>
         </div>
@@ -77,8 +74,8 @@ export default class extends AbstractView{
             </select>
             </br>
             <select name="canvasType" id="canvasType" onchange = "updateCanvas()">
-                <option value= 1>Full Field</option>
                 <option value= 2> Seven Line</option>
+                <option value= 1>Full Field</option>
                 <option value= 3>Custom Canvas</option>
             </select>
             </br>

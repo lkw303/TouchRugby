@@ -739,6 +739,7 @@ function createBall() {
     elem.style.width = "25px";
     elem.style.height = "25px";
     console.log("ball created");
+    ballArr.push(ballObject);
     hasBall = true;
   }
   else {
@@ -824,7 +825,7 @@ function updateCanvas() {
       break;
     case "2":
       width = 1000;
-      height = (width / 2);
+      height = 350;
       break;
     case "3":
       width = document.getElementById("width").value;
@@ -874,6 +875,9 @@ function toggleFrame() {
     defendArr.forEach(d => {
       d.frameOn();
     });
+    ballArr.forEach(b => {
+      b.frameOn();
+    });
 
   } else {
     if (opt === "2") {
@@ -887,6 +891,9 @@ function toggleFrame() {
       });
       defendArr.forEach(d => {
         d.frameOff();
+      });
+      ballArr.forEach(b => {
+        b.frameOff();
       });
 
     }
@@ -903,6 +910,9 @@ function runAnimate() {
   }
   if(playerArr){
     playerArr.forEach(a => { a.animate() });
+  }
+  if(ballArr){
+    ballrArr.forEach(a => { a.animate() });
   }
   
 };
@@ -987,6 +997,7 @@ var defendCount = 0;
 var playerArr = [];
 var defendArr = [];
 var attackArr = [];
+var ballArr = [];
 
 var Mouseposition = {
   x: 0,

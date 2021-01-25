@@ -11,8 +11,10 @@ export default class extends AbstractView{
         <div id = "top">
         <h1> About Us</h1>
         <p>
-           This App was created so we could stop using cones on the ground and criss-crossing our hands to move them around realising that we only have two hands and calling another two people to come move the other four cones and end up with a cluster fuck blocking people from seeing what was displayed.
+        STOP USING CONES!!!!!!!!!!!!!!!
+        This App was created to assist in showing different types of plays and tactics in Touch Rugby
         </p>
+        
         <p>
             Visit the github repository.
             Make a Pull request if you would like to propose some improvements!

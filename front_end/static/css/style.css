@@ -6,13 +6,13 @@
   grid-template-areas:  "top sidebar"
                         "canvas sidebar"
                         "buttons sidebar";
-  grid-template-columns: 4fr 1fr;
-  grid-template-rows: 2fr 10fr 4fr;
+  grid-template-columns: 0fr 0fr;
+   grid-template-rows: 0fr 2fr 1fr; 
   
 }
 #canvas{
-    width: 800px;
-     height: (800/5)*7px;
+     width: 1000px;
+     height: 500px;
      position: relative;
      background: gray;
      touch-action: none;
@@ -54,7 +54,7 @@ a {
 
 #layer1{
   width: 1000px;
-  height: 1000px;
+  height: 500px;
 
 }
 
