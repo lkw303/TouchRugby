@@ -13,10 +13,11 @@ function PlayerObject(id, pos_x, pos_y, state) {
   this.init_pos_x = pos_x;
   this.init_pos_y = pos_y;
   this.pos_history = [[pos_x, pos_y]];
-  
+
   this.isClicked = false;
   this.holdBall = false;
   this.isTouched = false;
+  this.onSide = true;
 
   this.pathCount = 0;
   this.traceCount = 0;
@@ -44,6 +45,7 @@ function PlayerObject(id, pos_x, pos_y, state) {
     var div = document.createElement("div");
     div.id = this.id;
     div.className = this.state;
+    div.classList.add("circle");
     div.style.position = "absolute"
     div.style.left = pos_x + "%";
     div.style.top = pos_y + "%"
@@ -120,13 +122,15 @@ function PlayerObject(id, pos_x, pos_y, state) {
     }
 
   };
-
+ // this.dump() will only be executed by the attacking ball carrier
+  //checks for collision with defender and dumps
   this.dump = function () {
     player = document.getElementById(this.id);
     var playerWidth = parseInt(player.style.width, 10);
     var playerHeight = parseInt(player.style.height, 10);
     var playerX = parseInt(player.style.left, 10) + playerWidth / 2;
     var playerY = parseInt(player.style.top, 10) + playerHeight / 2;
+    //this.onSide = false;
 
     for (i = 0; i < defendCount; i++) {
       defend = document.getElementById(`defend${i}`);
@@ -152,6 +156,7 @@ function PlayerObject(id, pos_x, pos_y, state) {
         ball.style.top = (playerY + playerHeight / 2 + ballHeight / 2) + "px";
         console.log("dumping");
         this.holdBall = false;
+        this.onSide = false;
         elem = document.getElementById("tactic")
         tactic = elem.options[elem.selectedIndex].value;
         ref = parseInt(defend.style.top, 10);
@@ -181,7 +186,7 @@ function PlayerObject(id, pos_x, pos_y, state) {
           indexCorner = id_array.indexOf(cornerId)
           if (indexCorner <= Math.floor((defendCount - 1) / 2)) {
             console.log(`index corner is ${indexCorner}`);
-            console.log("left corner right shut")
+            console.log("left corner right shut");
             var corner = id_array.slice(0, Math.floor((defendCount - 1) / 2) + 1);
             var shut = id_array.slice(Math.floor((defendCount - 1) / 2) + 1);
             var straight = [];
@@ -198,6 +203,7 @@ function PlayerObject(id, pos_x, pos_y, state) {
             console.log(`corner is ${corner}`);
             console.log(`shut is ${shut}`);
             console.log(`straight is ${straight}`);
+            
             this.back(200, -200, shut, corner, straight, tactic, ref);
           }
         }
@@ -219,10 +225,10 @@ function PlayerObject(id, pos_x, pos_y, state) {
         this.isTouched = false;
       };
     }
-
   };
 
-  this.back = function (x, y, shut, corner, straight, tactic, ref) { //shut and corner are arrays containing the ids of the corner and shuting players
+
+  this.back = async (x, y, shut, corner, straight, tactic, ref) =>{ //shut and corner are arrays containing the ids of the corner and shuting players
     console.log(`BACKINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG x is ${x} y is ${y}`);
     var ls_move = []
     var ls_def = []
@@ -263,6 +269,7 @@ function PlayerObject(id, pos_x, pos_y, state) {
         var y_move = y_func();
         var x_move = x_func();
         ls_move.push([x_move, y_move]);
+        
         anime({
           targets: `#defend${e}`,
           translateX: x_move,
@@ -298,6 +305,7 @@ function PlayerObject(id, pos_x, pos_y, state) {
         var y_move = y_func();
         var x_move = x_func();
         ls_move.push([x_move, y_move]);
+        
         anime({
           targets: `#defend${e}`,
           translateY: {
@@ -328,6 +336,7 @@ function PlayerObject(id, pos_x, pos_y, state) {
           };
           y_move = y_func();
           ls_move.push([0, y_move]);
+          
           anime({
             targets: `#defend${e}`,
             translateX: x,
@@ -351,10 +360,11 @@ function PlayerObject(id, pos_x, pos_y, state) {
         elem.style.top = (parseInt(elem.style.top, 10) + y_back) + "px";
         elem.style.left = (parseInt(elem.style.left, 10) + x_back) + "px";
         elem.style.transform = "translateX(0px) translateY(0px)";
+        this.onSide =true;
       };
 
     }, 2500)
-
+    console.log("end back");
   };
 
   this.frameOn = function () {
@@ -387,7 +397,7 @@ function PlayerObject(id, pos_x, pos_y, state) {
     elem.addEventListener("touchmove", onDrag);
     var newpath = document.createElementNS('http://www.w3.org/2000/svg', "path");
     var newtrace = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-    
+
     newpath.id = `path${this.pathCount}_${this.id}`;
     newpath.classList.add(`path${this.pathCount}`);
     newpath.classList.add(`${this.id}`);
@@ -401,8 +411,8 @@ function PlayerObject(id, pos_x, pos_y, state) {
 
     canvas.appendChild(newpath);
     canvas.appendChild(newtrace);
-    var x = parseInt(elem.style.left,10)+ this.width;
-    var y = parseInt(elem.style.top,10) + this.height;
+    var x = parseInt(elem.style.left, 10) + this.width;
+    var y = parseInt(elem.style.top, 10) + this.height;
     // var x = Mouseposition.x - offsetLayerLeft;
     // var y = Mouseposition.y - offsetLayerTop;
     this.startX = Mouseposition.x;
@@ -549,18 +559,18 @@ function PlayerObject(id, pos_x, pos_y, state) {
       });
 
 
-      async function transform(id,iterator,transformList) {
+      async function transform(id, iterator, transformList) {
         return new Promise(
           resolve => {
             setTimeout(() => {
               elem = document.getElementById(id);
-              var canvas =  document.getElementById("layer1");          
+              var canvas = document.getElementById("layer1");
               var offsetLayerLeft = canvas.getBoundingClientRect().left;
-              var offsetLayerTop = canvas.getBoundingClientRect().top;  
+              var offsetLayerTop = canvas.getBoundingClientRect().top;
               var transform = elem.style.transform;
               var transform_ls = transform.split(" ");
-              var transX =  parseInt(transform_ls[0].split("(")[1],10);
-              var transY = parseInt(transform_ls[1].split("(")[1],10);
+              var transX = parseInt(transform_ls[0].split("(")[1], 10);
+              var transY = parseInt(transform_ls[1].split("(")[1], 10);
               // var left = parseInt(elem.style.left,10) + transX + "px";
               // var top = parseInt(elem.style.top,10) + transY + "px";
               elem.style.left = transX + "px"
@@ -573,7 +583,7 @@ function PlayerObject(id, pos_x, pos_y, state) {
             }, 1100)
           }
         )
-        
+
       };
       transform(this.id, this.iterator, this.transformList)
 
@@ -586,37 +596,37 @@ function PlayerObject(id, pos_x, pos_y, state) {
         console.log("changing iterator");
         this.iterator += 1
       };
-    }else{
+    } else {
       console.log(`${this.id} has non path`)
     }
   };
   //need to change the element's transfrom to 0 and set its style.left and style.top to the new transformed location
 
-  this.createFrameThread = function(){ //adds a column to the sidebar and tracks the frames of the player
+  this.createFrameThread = function () { //adds a column to the sidebar and tracks the frames of the player
     var tab = document.getElementById(`${this.state}Tab`);
     var div = document.createElement("DIV");
     var list = document.createElement("UL");
     var templateColumns = "";
     var templateAreas = ""
-    for (var i = 0; i < (this.id + 1); i++){
+    for (var i = 0; i < (this.id + 1); i++) {
       templateColumns += "1fr ";
       // templateAreas += `${this.state}${i} `;
     };
     tab.style.gridTemplateColumns = templateColumns;
     // tab.style.gridTemplateAreas = templateAreas;
     // div.style.gridArea = `${this.id}`;
-    div.style.gridColumn = `${this.index+1}/${this.index+2}`;
+    div.style.gridColumn = `${this.index + 1}/${this.index + 2}`;
     div.id = `thread_${this.id}`;
     list.id = `list_${this.id}`;
     // list.style.gridArea = `${this.id}`;
     list.style.padding = "10px 10px";
     // var sidebar = document.getElementById("sidebar");
-    
+
     tab.appendChild(div);
     div.appendChild(list);
   };
 
-  this.addFrame = function(){
+  this.addFrame = function () {
     // var tab = document.getElementById(`${this.state}Tab`);
     var list = document.getElementById(`list_${this.id}`);
     var frame = document.createElement("LI");
@@ -650,7 +660,7 @@ function PlayerObject(id, pos_x, pos_y, state) {
         this.followMouse();
         if (this.state === "attack") {
           this.ballFollow();
-          if (this.holdBall) {
+          if (this.holdBall && this.onSide) {
             var e = document.getElementById("dump");
             opt = e.options[e.selectedIndex].value;
             if (opt === "1") { // check if dumping set to true
@@ -666,8 +676,12 @@ function PlayerObject(id, pos_x, pos_y, state) {
         this.followMouse();
         if (this.state === "attack") {
           this.ballFollow();
-          if (this.holdBall) {
-            this.dump(); // check for collision with defender and dump
+          if (this.holdBall && this.onSide) {
+            var e = document.getElementById("dump");
+            opt = e.options[e.selectedIndex].value;
+            if (opt === "1") { // check if dumping set to true
+              this.dump();  // check for collision with deefender and dump
+            }
           }
         };
         console.log("follwing touch")
@@ -698,33 +712,39 @@ function PlayerObject(id, pos_x, pos_y, state) {
 
 //***************************************************GLOBAL FUNCTIONS ****************************************/
 
-
-function createPlayer() {
-  posx = (100 / 6) * (playerCount % 6);
-  posy = Math.floor(playerCount / 6) * 50;
-  var player = new PlayerObject(playerCount, posx, posy, "player");
-  playerArr.push(player)
-  playerCount++;
-};
+//no longer in use
+// function createPlayer() {
+//   posx = (100 / 6) * (playerCount % 6);
+//   posy = Math.floor(playerCount / 6) * 50;
+//   var player = new PlayerObject(playerCount, posx, posy, "player");
+//   playerArr.push(player)
+//   playerCount++;
+// };
 
 function createAttack() {
-  posx = (100 / 6) * (attackCount % 6);
-  posy = 50;
-  var attacker = new PlayerObject(attackCount, posx, posy, "attack");
-  elem = document.getElementById(`attack${attackCount}`);
-  elem.style.background = "blue";
-  attackArr.push(attacker)
-  attackCount++;
+  if (attackCount < 6) {
+    posx = (100 / 6) * (attackCount % 6);
+    posy = 50;
+    var attacker = new PlayerObject(attackCount, posx, posy, "attack");
+    elem = document.getElementById(`attack${attackCount}`);
+    elem.style.background = "blue";
+    attackArr.push(attacker)
+    attackCount++;
+  }
+
 };
 
 function createDefend() {
-  posx = (100 / 6) * (defendCount % 6);
-  posy = Math.floor(defendCount / 6) * 50;
-  var defender = new PlayerObject(defendCount, posx, posy, "defend");
-  elem = document.getElementById(`defend${defendCount}`)
-  elem.style.background = "red";
-  defendArr.push(defender);
-  defendCount++;
+  if (defendCount < 6) {
+    posx = (100 / 6) * (defendCount % 6);
+    posy = Math.floor(defendCount / 6) * 50;
+    var defender = new PlayerObject(defendCount, posx, posy, "defend");
+    elem = document.getElementById(`defend${defendCount}`)
+    elem.style.background = "red";
+    defendArr.push(defender);
+    defendCount++;
+
+  }
 };
 
 // D.R.Y combine the 3 create functions intto 1
@@ -747,17 +767,17 @@ function createBall() {
   }
 
 };
+//NO LONGER IN USE
+// function removePlayer() {
+//   if (playerCount >= 1&& playerCount <= 6) {
+//     playerCount -= 1;
+//     playerArr.pop()
+//     document.getElementById(`player${playerCount}`).remove();
+//   } else {
+//     console.log("already no more players")
+//   }
 
-function removePlayer() {
-  if (playerCount >= 1) {
-    playerCount -= 1;
-    playerArr.pop()
-    document.getElementById(`player${playerCount}`).remove();
-  } else {
-    console.log("already no more players")
-  }
-
-};
+// };
 
 function removeAttack() {
   if (attackCount >= 1) {
@@ -810,34 +830,7 @@ document.addEventListener('touchmove', function (e) {
   //console.log(Mouseposition)
 });
 
-function updateCanvas() {
-  console.log("updating canvas");
-  elem = document.getElementById("canvas");
-  e = document.getElementById("canvasType");
-  var layer = document.getElementById("layer1");
-  opt = e.options[e.selectedIndex].value;
-  var width;
-  var height;
-  switch (opt) {
-    case "1":
-      width = 800;
-      height = (width / 5) * 7;
-      break;
-    case "2":
-      width = 1000;
-      height = 350;
-      break;
-    case "3":
-      width = document.getElementById("width").value;
-      height = document.getElementById("height").value;
-      break;
-  };
-  elem.style.height = height + "px";
-  elem.style.width = width + "px";
-  layer.style.height = height + "px";
-  layer.style.width = width + "px";
 
-};
 
 function createTeam() {
   e = document.getElementById("teamSide");
@@ -845,16 +838,21 @@ function createTeam() {
   size = document.getElementById("teamSize").value
 
   if (teamSide === "1") {
-    for (i = 0; i < size; i++) {
-      createAttack();
-    };
+    if (attackCount + size <= 6) {
+      for (i = 0; i < size; i++) {
+        createAttack();
+      };
+    }
+
   }
 
   else {
     if (teamSide === "2") {
-      for (i = 0; i < size; i++) {
-        createDefend();
-      };
+      if (defendCount + size <= 6) {
+        for (i = 0; i < size; i++) {
+          createDefend();
+        };
+      }
     }
   }
 };
@@ -902,19 +900,19 @@ function toggleFrame() {
 };
 
 function runAnimate() {
-  if(attackArr){
+  if (attackArr) {
     attackArr.forEach(a => { a.animate() });
   }
-  if(defendArr){
+  if (defendArr) {
     defendArr.forEach(a => { a.animate() });
   }
-  if(playerArr){
+  if (playerArr) {
     playerArr.forEach(a => { a.animate() });
   }
-  if(ballArr){
+  if (ballArr) {
     ballrArr.forEach(a => { a.animate() });
   }
-  
+
 };
 
 function openTab(evt, tabName) {
@@ -940,15 +938,15 @@ function openTab(evt, tabName) {
 
 // possible issue -- this function assumes the selected frame is the last frame added to the stack
 //pathCount is increase in onPress therefore the need to minus 1
-function selectFrame(pathCount,traceCount,index,state){
-  frameId = `frame${pathCount-1}_${state}${index}`;
-  pathId = `path${pathCount-1}_${state}${index}`;
-  traceId = `trace${traceCount-1}_${state}${index}`;
+function selectFrame(pathCount, traceCount, index, state) {
+  frameId = `frame${pathCount - 1}_${state}${index}`;
+  pathId = `path${pathCount - 1}_${state}${index}`;
+  traceId = `trace${traceCount - 1}_${state}${index}`;
   var frame = document.getElementById(frameId)
   var path = document.getElementById(pathId);
   var trace = document.getElementById(traceId);
 
-  if (!frameSelected){
+  if (!frameSelected) {
     frameSelected = true;
     selectedFrame = frameId;
     selectedPath = pathId;
@@ -956,7 +954,7 @@ function selectFrame(pathCount,traceCount,index,state){
     path.setAttribute("stroke", "black");
     frame.style.background = "gray";
   }
-  else{
+  else {
     var prevFrame = document.getElementById(selectedFrame);
     var prevPath = document.getElementById(selectedPath);
     prevFrame.style.background = "white";
@@ -968,7 +966,7 @@ function selectFrame(pathCount,traceCount,index,state){
     frame.style.background = "gray";
     path.setAttribute("stroke", "black");
   };
-  
+
   // switch (state){
   //   case "attack":
   //     attackArr[index].pathCount -= 1;
@@ -985,7 +983,7 @@ function selectFrame(pathCount,traceCount,index,state){
   //     playerArr[index].traceCount -= 1;
   //     break;
   // };
-  
+
 
 }
 
