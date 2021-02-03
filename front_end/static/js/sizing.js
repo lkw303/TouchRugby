@@ -1,4 +1,25 @@
+
+
 var displayNav = false;
+var displaySettings = false;
+var initial_canvas_height;
+var initial_canvas_width;
+// var new_canvas_width;
+// var new_canvas_height;
+
+function init_canvas(){
+  var canvas_style = window.getComputedStyle(document.getElementById("canvas"))
+  initial_canvas_width =  parseInt(canvas_style.width ,10);
+  initial_canvas_height = parseInt(canvas_style.height,10);
+  console.log("init_canvas");
+  var ro = new ResizeObserver(entries =>{
+    entry = entries[0];
+    new_canvas_width  = entry.contentRect.width;
+    new_canvas_height = entry.contentRect.height;
+  })
+}
+
+
 function updateCanvas() {
     console.log("updating canvas");
     elem = document.getElementById("canvas");
@@ -9,11 +30,11 @@ function updateCanvas() {
     var height;
     switch (opt) {
       case "1":
-        document.getElementById("app").style.gridTemplateRows = "0fr 4fr 1fr";
+        document.getElementById("app").style.gridTemplateRows = "4fr 0.1fr";
         
         break;
       case "2":
-        document.getElementById("app").style.gridTemplateRows = "0fr 2fr 1fr";
+        document.getElementById("app").style.gridTemplateRows = "2fr 0.1fr";
 
         break;
       case "3":
@@ -35,11 +56,51 @@ function updateCanvas() {
   function toggleNav(){
     if(displayNav){
         document.getElementById("nav").style.display = "none";
+        document.getElementById("settingscontent").style.display = "none";
+        displaySettings = false;
         displayNav = false;
     }
     else{
         document.getElementById("nav").style.display = "unset";
+        document.getElementById("settingscontent").style.display = "unset";
+        displaySettings = true;
         displayNav = true;
+    }
+    resize()
+    
+  }
+
+  function toggleSettings(){
+    if(displaySettings){
+        document.getElementById("settingscontent").style.display = "none";
+        displaySettings = false;
+    }
+    else{
+        document.getElementById("settingscontent").style.display = "unset";
+        displaySettings = true;
     }
     
   }
+ 
+  function resize(){//function to ensure that all entities are within the canvas even after rotation
+    setTimeout(function(){
+      var canvas = document.getElementById("canvas");
+      var canvas_style = window.getComputedStyle(canvas);
+      var new_width =   parseInt(canvas_style.width  , 10);
+      var new_height =  parseInt(canvas_style.height , 10); 
+      attackArr.forEach(e =>{e.handleResize(initial_canvas_width,initial_canvas_height, new_width, new_height)});
+      defendArr.forEach(e =>{e.handleResize(initial_canvas_width,initial_canvas_height, new_width, new_height)});
+      ballArr.forEach(e =>{e.handleResize(initial_canvas_width,initial_canvas_height, new_width, new_height)});
+      console.log("resizing");
+      initial_canvas_width = new_width;
+      initial_canvas_height = new_height;
+
+    }, 100);
+      
+
+  }
+
+  window.addEventListener("orientationchange", function(event) {
+    resize();
+  });
+ 

@@ -17,13 +17,14 @@ export default class extends AbstractView{
     // };
 
     async getHtml(){
+        
     
         return `
-        <div id = "canvas" class = "canvas">
+        <div id = "canvas" class = "canvas" >
         <svg id = "layer1"></svg>
         </div>
         <div id = "settingsbar">
-            <label for="settingsbar" class="toggle" onclick= "toggleNav()">☰</label>
+            <label for="settingsbar" class="toggle" onclick= "toggleNav()" >☰</label>
             <div id = "settingscontent">
                 <select name="canvasType" id="canvasType" onchange = "updateCanvas()">
                     <option value= 2> Seven Line</option>
@@ -75,11 +76,14 @@ export default class extends AbstractView{
 
             <button type = "buttons" class = "ball" id = "ball" onclick = "createBall()"> Add Ball</button>
             <button type = "buttons" class = "destructor" id = "destructed" onclick = "removeBall()"> remove ball</button>
-            <button type = "buttons" class = "frameStart" id = "frameStart" onclick = "startFrame()">Start a Frame</button>
+            
             
         </div>
+
        
 ` ;
     }
+    
  };
+
 

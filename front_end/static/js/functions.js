@@ -33,10 +33,6 @@ function PlayerObject(id, pos_x, pos_y, state) {
   this.frameCount = 0;
 
 
-  this.init_msg = function () {
-    // console.log(`player ${this.id} is initialised at position x = ${this.pos_x}, y = ${this.pos_y}`);
-  };
-
   this.init_html = function () {
     var width = 35;
     var height = 35;
@@ -219,10 +215,13 @@ function PlayerObject(id, pos_x, pos_y, state) {
             this.back(0, -200, shut, corner, straight, tactic, ref)
           }
         }
+        
+        this.onSide = true;
         break;
       }
       else {
         this.isTouched = false;
+        
       };
     }
   };
@@ -533,7 +532,7 @@ function PlayerObject(id, pos_x, pos_y, state) {
     return path;
   };
 
-
+  
   this.animate = function () {
     if (this.pathCount > 0) {
       var animeInit = async () => {
@@ -640,9 +639,26 @@ function PlayerObject(id, pos_x, pos_y, state) {
     this.frameCount += 1;
   }
 
+  this.handleResize = function(width,height,new_width, new_height){
+    var elem = document.getElementById(this.id);
+    console.log(`old canvas dimension is ${width}, ${height}`);
+    console.log(`new canvas dimension is ${new_width}, ${new_height}`);
+    var left =    parseInt(elem.style.left,10);
+    var top =     parseInt(elem.style.top ,10);
+    var ratio_horizontal = left/width;
+    var ratio_vertical = top/height;
+    var new_left = ratio_horizontal*new_width;
+    var new_top = ratio_vertical*new_height;
+    elem.style.left = new_left + "px";
+    elem.style.top = new_top + "px";
+    console.log(`ratios are ${ratio_horizontal}, ${ratio_vertical}`)
+    console.log(`new left is ${new_left}`)
+    console.log(`new top is ${new_top}`)
+    
+  }
+
   this.init = function () {
     this.init_html();
-    this.init_msg();
     this.createFrameThread();
     elem = document.getElementById(this.id);
     elem.style.borderRadius = "50%";
@@ -966,23 +982,6 @@ function selectFrame(pathCount, traceCount, index, state) {
     frame.style.background = "gray";
     path.setAttribute("stroke", "black");
   };
-
-  // switch (state){
-  //   case "attack":
-  //     attackArr[index].pathCount -= 1;
-  //     attackArr[index].traceCount -= 1;
-  //     break;
-
-  //   case "defend":
-  //     defendArr[index].pathCount -= 1;
-  //     defendArr[index].traceCount -= 1;
-  //     break;
-
-  //   case "player":
-  //     playerArr[index].pathCount -= 1;
-  //     playerArr[index].traceCount -= 1;
-  //     break;
-  // };
 
 
 }

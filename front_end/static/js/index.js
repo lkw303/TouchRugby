@@ -47,6 +47,7 @@ const router = async () =>{
     const view = new match.route.view();
 
     document.querySelector("#app").innerHTML = await view.getHtml()
+    init_canvas();
 
     console.log(potentialMatches);
     //match.route.view();
