@@ -13,7 +13,8 @@
                         "canvas settingsbar"
                         "buttons settingsbar";
   grid-template-columns: 1fr .05fr;
-   grid-template-rows: 2fr 0.1fr; 
+  grid-template-rows: 2fr 0.1fr; 
+  grid-area: app;
 }
 
 #canvas{
@@ -32,15 +33,22 @@
   margin: 0 0 0 var(--nav-width);
   font-family: 'Quicksand', sans-serif;
   font-size: 24px;
+  display: grid;
+  grid-area: "nav"
+            "app";
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr;
 }
 .nav {
-  position: fixed;
+  display: none;
+  /* position: fixed;
   top: 0;
-  left: 0;
+  left: 0; */
   width: var(--nav-width);
   font-size: 24px ;
   /* height: 100vh; */
   background: white;
+  grid-area: nav;
 }
 
 .nav__link {
