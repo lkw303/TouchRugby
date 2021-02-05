@@ -1,4 +1,4 @@
-function PlayerObject(id, pos_x, pos_y, state) {
+function PlayerObject(id, pos_x, pos_y, state, colour, size) {
   //let player = Object.create(constructorPlayer);
   this.id = state + id;
   this.index = id;
@@ -7,8 +7,8 @@ function PlayerObject(id, pos_x, pos_y, state) {
   this.pos_x = pos_x;
   this.pos_y = pos_y;
 
-  this.width = null;
-  this.height = null;
+  this.width = size;
+  this.height = size;
 
   this.init_pos_x = pos_x;
   this.init_pos_y = pos_y;
@@ -34,10 +34,8 @@ function PlayerObject(id, pos_x, pos_y, state) {
 
 
   this.init_html = function () {
-    var width = 35;
-    var height = 35;
-    this.width = width;
-    this.height = height;
+    this.width = size;
+    this.height = size;
     var div = document.createElement("div");
     div.id = this.id;
     div.className = this.state;
@@ -45,8 +43,9 @@ function PlayerObject(id, pos_x, pos_y, state) {
     div.style.position = "absolute"
     div.style.left = pos_x + "px";
     div.style.top = pos_y + "px"
-    div.style.width = width + "px";
-    div.style.height = height + "px";
+    div.style.width =   this.width + "px";
+    div.style.height =  this.height + "px";
+    div.style.background = colour;
     document.getElementById("canvas").appendChild(div);
   };
 
@@ -59,8 +58,8 @@ function PlayerObject(id, pos_x, pos_y, state) {
     var H = document.getElementById("canvas").getBoundingClientRect().height - this.height;
 
     if (X <= W && X >= 0 && Y <= H && Y >= 0) {
-      elem.style.left = (Mouseposition.x - document.getElementById("canvas").getBoundingClientRect().left - 25) + "px";
-      elem.style.top = (Mouseposition.y - document.getElementById("canvas").getBoundingClientRect().top - 25) + "px";
+      elem.style.left = (Mouseposition.x - document.getElementById("canvas").getBoundingClientRect().left - this.width/2) + "px";
+      elem.style.top = (Mouseposition.y - document.getElementById("canvas").getBoundingClientRect().top -   this.height/2) + "px";
       // console.log("follow mouse function")
     } else {
       // console.log("End of Boundary")
@@ -110,15 +109,15 @@ function PlayerObject(id, pos_x, pos_y, state) {
       if (difX < limX && difY < limY) {
         collision = true;
         // console.log(`collision is ${collision}`)
-        ball.style.left = (playerX - playerWidth / 2 - ballWidth / 2) + "px";
-        ball.style.top = (playerY - playerHeight / 2 - ballHeight / 2) + "px";
+        ball.style.left = (playerX - playerWidth / 2 - ballWidth / 3) + "px";
+        ball.style.top = (playerY - playerHeight / 2 - ballHeight / 3) + "px";
         // console.log(ball)
         this.holdBall = true;
       };
     }
 
   };
- // this.dump() will only be executed by the attacking ball carrier
+  // this.dump() will only be executed by the attacking ball carrier
   //checks for collision with defender and dumps
   this.dump = function () {
     player = document.getElementById(this.id);
@@ -131,14 +130,16 @@ function PlayerObject(id, pos_x, pos_y, state) {
     for (i = 0; i < defendCount; i++) {
       defend = document.getElementById(`defend${i}`);
       // future can change width to a constant assuming that all players are the same height
-      defendHeight = parseInt(defend.style.height, 10);
-      defendWidth = parseInt(defend.style.width, 10);
-      defendX = parseInt(defend.style.left, 10) + defendWidth / 2;
-      defendY = parseInt(defend.style.top, 10) + defendHeight / 2;
+      var defendHeight = parseInt(defend.style.height, 10);
+      var defendWidth = parseInt(defend.style.width, 10);
+      var defendX = parseInt(defend.style.left, 10) + defendWidth / 2;
+      var defendY = parseInt(defend.style.top, 10) + defendHeight / 2;
       var limX = playerWidth / 2 + defendWidth / 2;
       var limY = playerHeight / 2 + defendHeight / 2;
-      difX = Math.abs(playerX - defendX);
-      difY = Math.abs(playerY - defendY);
+      var difX = Math.abs(playerX - defendX);
+      var difY = Math.abs(playerY - defendY);
+      var x = this.width*3;
+      var y = this.height*5;
       console.log(`difX is ${difX}`);
       console.log(`difY is ${difY}`);
       if (difX < limX && difY < limY) {
@@ -152,7 +153,6 @@ function PlayerObject(id, pos_x, pos_y, state) {
         ball.style.top = (playerY + playerHeight / 2 + ballHeight / 2) + "px";
         console.log("dumping");
         this.holdBall = false;
-        this.onSide = false;
         elem = document.getElementById("tactic")
         tactic = elem.options[elem.selectedIndex].value;
         ref = parseInt(defend.style.top, 10);
@@ -173,7 +173,6 @@ function PlayerObject(id, pos_x, pos_y, state) {
           console.log(`sorted x_array is ${x_array}`)
           console.log(`x_array is ${x_array}`);
           console.log(`dic_pos is ${dic_pos}`);
-          //this.back(100,-100);
           for (j = 0; j < defendCount; j++) {
             id_array.push(dic_pos[x_array[j]]);
           };
@@ -189,7 +188,7 @@ function PlayerObject(id, pos_x, pos_y, state) {
             console.log(`corner is ${corner}`);
             console.log(`shut is ${shut}`);
             console.log(`straight is ${straight}`);
-            this.back(-200, -200, shut, corner, straight, tactic, ref);
+            this.back(-x, -y, shut, corner, straight, tactic, ref);
           }
           else {
             console.log("left shut right corner");
@@ -200,7 +199,8 @@ function PlayerObject(id, pos_x, pos_y, state) {
             console.log(`shut is ${shut}`);
             console.log(`straight is ${straight}`);
             
-            this.back(200, -200, shut, corner, straight, tactic, ref);
+
+            this.back(x, -y, shut, corner, straight, tactic, ref);
           }
         }
         else {
@@ -212,22 +212,22 @@ function PlayerObject(id, pos_x, pos_y, state) {
             var shut = [];
             var corner = [];
             var straight = id_array;
-            this.back(0, -200, shut, corner, straight, tactic, ref)
+            this.back(0, -y, shut, corner, straight, tactic, ref)
           }
         }
-        
-        this.onSide = true;
+
         break;
       }
       else {
         this.isTouched = false;
-        
+
       };
     }
   };
 
 
-  this.back = async (x, y, shut, corner, straight, tactic, ref) =>{ //shut and corner are arrays containing the ids of the corner and shuting players
+  this.back = async (x, y, shut, corner, straight, tactic, ref) => { //shut and corner are arrays containing the ids of the corner and shuting players
+    this.onSide = false;
     console.log(`BACKINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG x is ${x} y is ${y}`);
     var ls_move = []
     var ls_def = []
@@ -239,7 +239,7 @@ function PlayerObject(id, pos_x, pos_y, state) {
     if (tactic === "1") {
 
       ls_def = corner.concat(shut)
-      var W = document.getElementById("canvas").getBoundingClientRect().width - 25;
+      var W = document.getElementById("canvas").getBoundingClientRect().width - this.width;
       corner.forEach(e => {
         var top = parseInt(document.getElementById(`defend${e}`).style.top, 10);
         var left = parseInt(document.getElementById(`defend${e}`).style.left, 10);
@@ -268,7 +268,7 @@ function PlayerObject(id, pos_x, pos_y, state) {
         var y_move = y_func();
         var x_move = x_func();
         ls_move.push([x_move, y_move]);
-        
+
         anime({
           targets: `#defend${e}`,
           translateX: x_move,
@@ -304,7 +304,7 @@ function PlayerObject(id, pos_x, pos_y, state) {
         var y_move = y_func();
         var x_move = x_func();
         ls_move.push([x_move, y_move]);
-        
+
         anime({
           targets: `#defend${e}`,
           translateY: {
@@ -335,7 +335,7 @@ function PlayerObject(id, pos_x, pos_y, state) {
           };
           y_move = y_func();
           ls_move.push([0, y_move]);
-          
+
           anime({
             targets: `#defend${e}`,
             translateX: x,
@@ -359,7 +359,7 @@ function PlayerObject(id, pos_x, pos_y, state) {
         elem.style.top = (parseInt(elem.style.top, 10) + y_back) + "px";
         elem.style.left = (parseInt(elem.style.left, 10) + x_back) + "px";
         elem.style.transform = "translateX(0px) translateY(0px)";
-        this.onSide =true;
+        this.onSide = true;
       };
 
     }, 2500)
@@ -532,7 +532,7 @@ function PlayerObject(id, pos_x, pos_y, state) {
     return path;
   };
 
-  
+
   this.animate = function () {
     if (this.pathCount > 0) {
       var animeInit = async () => {
@@ -639,22 +639,22 @@ function PlayerObject(id, pos_x, pos_y, state) {
     this.frameCount += 1;
   }
 
-  this.handleResize = function(width,height,new_width, new_height){
+  this.handleResize = function (width, height, new_width, new_height) {
     var elem = document.getElementById(this.id);
     console.log(`old canvas dimension is ${width}, ${height}`);
     console.log(`new canvas dimension is ${new_width}, ${new_height}`);
-    var left =    parseInt(elem.style.left,10);
-    var top =     parseInt(elem.style.top ,10);
-    var ratio_horizontal = left/width;
-    var ratio_vertical = top/height;
-    var new_left = ratio_horizontal*new_width;
-    var new_top = ratio_vertical*new_height;
+    var left = parseInt(elem.style.left, 10);
+    var top = parseInt(elem.style.top, 10);
+    var ratio_horizontal = left / width;
+    var ratio_vertical = top / height;
+    var new_left = ratio_horizontal * new_width;
+    var new_top = ratio_vertical * new_height;
     elem.style.left = new_left + "px";
     elem.style.top = new_top + "px";
     console.log(`ratios are ${ratio_horizontal}, ${ratio_vertical}`)
     console.log(`new left is ${new_left}`)
     console.log(`new top is ${new_top}`)
-    
+
   }
 
   this.init = function () {
@@ -748,11 +748,16 @@ function PlayerObject(id, pos_x, pos_y, state) {
 
 function createAttack(canvas_width, canvas_height) {
   if (attackCount < 6) {
-    posx = (canvas_width/ 6) * (attackCount % 6);
-    posy = canvas_height*0.5;
-    var attacker = new PlayerObject(attackCount, posx, posy, "attack");
+    if (canvas_width > 1500) {
+      size = 150;
+    }
+    else {
+      size = 35;
+    };
+    posx = (canvas_width / 6) * (attackCount % 6);
+    posy = canvas_height * 0.5;
+    var attacker = new PlayerObject(attackCount, posx, posy, "attack","#F1C5AE", size);
     elem = document.getElementById(`attack${attackCount}`);
-    elem.style.background = "#F1C5AE";
     attackArr.push(attacker)
     attackCount++;
   }
@@ -761,11 +766,16 @@ function createAttack(canvas_width, canvas_height) {
 
 function createDefend(canvas_width, canvas_height) {
   if (defendCount < 6) {
+    if (canvas_width > 1500) {
+      size = 150;
+    }
+    else {
+      size = 35;
+    }
     posx = (canvas_width / 6) * (defendCount % 6);
-    posy = Math.floor(defendCount / 6) * (canvas_height/2);
-    var defender = new PlayerObject(defendCount, posx, posy, "defend");
+    posy = Math.floor(defendCount / 6) * (canvas_height / 2);
+    var defender = new PlayerObject(defendCount, posx, posy, "defend","#35455D", size);
     elem = document.getElementById(`defend${defendCount}`)
-    elem.style.background = "#35455D";
     defendArr.push(defender);
     defendCount++;
 
@@ -774,15 +784,19 @@ function createDefend(canvas_width, canvas_height) {
 
 // D.R.Y combine the 3 create functions intto 1
 
-function createBall() {
+function createBall(canvas_width, canvas_height) {
   if (!hasBall) {
+    if (canvas_width > 1500) {
+      size = 100;
+    }
+    else{
+      size = 25;
+    }
     posx = 0;
     posy = 0;
-    ballObject = new PlayerObject(0, posx, posy, "ball");
+    ballObject = new PlayerObject(0, posx, posy, "ball", "white", size);
     elem = document.getElementById("ball0");
     elem.style.background = "white";
-    elem.style.width = "25px";
-    elem.style.height = "25px";
     console.log("ball created");
     ballArr.push(ballObject);
     hasBall = true;
@@ -882,47 +896,7 @@ function createTeam() {
   }
 };
 
-function toggleFrame() {
-  console.log("toggling frame")
-  var e = document.getElementById("frameOn");
-  opt = e.options[e.selectedIndex].value;
-  if (opt === "1") {
-    frameOn = true;
-    console.log("frame toggled on");
-    playerArr.forEach(p => {
-      p.frameOn();
-    });
-    attackArr.forEach(a => {
-      a.frameOn();
-    });
-    defendArr.forEach(d => {
-      d.frameOn();
-    });
-    ballArr.forEach(b => {
-      b.frameOn();
-    });
 
-  } else {
-    if (opt === "2") {
-      console.log("frame toggled off");
-      frameOn = false;
-      playerArr.forEach(p => {
-        p.frameOff();
-      });
-      attackArr.forEach(a => {
-        a.frameOff();
-      });
-      defendArr.forEach(d => {
-        d.frameOff();
-      });
-      ballArr.forEach(b => {
-        b.frameOff();
-      });
-
-    }
-  }
-
-};
 
 function runAnimate() {
   if (attackArr) {
