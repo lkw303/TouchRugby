@@ -24,20 +24,20 @@ export default class extends AbstractView{
         <svg id = "layer1"></svg>
         </div>
         <div id = "settingsbar">
-            <label for="settingsbar" class="toggle" onclick= "toggleNav()" >☰</label>
+            <label for="settingsbar" class="toggle" onclick= "toggleNav();toggleSettings()" >☰</label>
             <div id = "settingscontent">
-                <select name="canvasType" id="canvasType" onchange = "updateCanvas()">
+                <select name="canvasType" id="canvasType" class = "buttons" onchange = "updateCanvas()">
                     <option value= 2> Seven Line</option>
                     <option value= 1>Full Field</option>
                 </select>
 
-                <select name ="tactic" id = "tactic">
+                <select name ="tactic" id = "tactic" class = "buttons">
                     <option value = 1>Corner & Shut</options>
                     <option value = 2>Back Straight</options>
                     <option value = 3>None</options>
                 </select>
-                Toggle Dump
-                <select name ="dump" id = "dump" >
+                <p>Toggle Dump<p>
+                <select name ="dump" id = "dump" class = "buttons" >
                     <option value = 1>True</options>
                     <option value = 2>False</options>
                 </select>
@@ -68,14 +68,14 @@ export default class extends AbstractView{
 
         <div id = "buttons" class = 'buttons'>
             
-            <button type = "buttons" class = "constructor" id = "constructor" onclick = "createAttack(initial_canvas_width, initial_canvas_height)">Create Attackers</button>
-            <button type = "buttons" class = "constructor" id = "constructor" onclick = "createDefend(initial_canvas_width, initial_canvas_height)">Create Defenders</button>
+            <button type = "buttons" class = "constructor buttons" id = "constructor" onclick = "createAttack(initial_canvas_width, initial_canvas_height)">Create Attackers</button>
+            <button type = "buttons" class = "constructor buttons" id = "constructor" onclick = "createDefend(initial_canvas_width, initial_canvas_height)">Create Defenders</button>
 
-            <button type ="buttons" class = "destructor" id = "destructor" onclick = "removeAttack()"> Remove Attacker</button>
-            <button type ="buttons" class = "destructor" id = "destructor" onclick = "removeDefend()"> Remove Defender</button>
+            <button type ="buttons" class = "destructor buttons" id = "destructor" onclick = "removeAttack()"> Remove Attacker</button>
+            <button type ="buttons" class = "destructor buttons" id = "destructor" onclick = "removeDefend()"> Remove Defender</button>
 
-            <button type = "buttons" class = "ball" id = "ball" onclick = "createBall()"> Add Ball</button>
-            <button type = "buttons" class = "destructor" id = "destructed" onclick = "removeBall()"> remove ball</button>
+            <button type = "buttons" class = "ball buttons" id = "ball" onclick = "createBall(initial_canvas_width, initial_canvas_height)"> Add Ball</button>
+            <button type = "buttons" class = "destructor buttons" id = "destructed" onclick = "removeBall()"> remove ball</button>
             
             
         </div>

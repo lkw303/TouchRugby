@@ -52,18 +52,14 @@ function updateCanvas() {
     // layer.style.width = width + "px";
   
   };
-
+ 
   function toggleNav(){
     if(displayNav){
         document.getElementById("nav").style.display = "none";
-        document.getElementById("settingscontent").style.display = "none";
-        displaySettings = false;
         displayNav = false;
     }
     else{
         document.getElementById("nav").style.display = "unset";
-        document.getElementById("settingscontent").style.display = "unset";
-        displaySettings = true;
         displayNav = true;
     }
     resize()
@@ -97,10 +93,55 @@ function updateCanvas() {
 
     }, 100);
       
+  }
+
+  function changeGridArea(){
 
   }
 
   window.addEventListener("orientationchange", function(event) {
     resize();
   });
+
+  function toggleFrame() {
+    console.log("toggling frame")
+    var e = document.getElementById("frameOn");
+    opt = e.options[e.selectedIndex].value;
+    if (opt === "1") {
+      frameOn = true;
+      console.log("frame toggled on");
+      playerArr.forEach(p => {
+        p.frameOn();
+      });
+      attackArr.forEach(a => {
+        a.frameOn();
+      });
+      defendArr.forEach(d => {
+        d.frameOn();
+      });
+      ballArr.forEach(b => {
+        b.frameOn();
+      });
+  
+    } else {
+      if (opt === "2") {
+        console.log("frame toggled off");
+        frameOn = false;
+        playerArr.forEach(p => {
+          p.frameOff();
+        });
+        attackArr.forEach(a => {
+          a.frameOff();
+        });
+        defendArr.forEach(d => {
+          d.frameOff();
+        });
+        ballArr.forEach(b => {
+          b.frameOff();
+        });
+  
+      }
+    }
+  
+  };
  

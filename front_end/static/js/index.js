@@ -25,6 +25,10 @@ const router = async () =>{
     // location object is part ofthe window object and is accessed  through the window location property
 
     const potentialMatches = routes.map(route =>{ // for each route in the "routes" array an object below is returned
+        if (location.pathname === route.path && route.path!="/"){
+            document.getElementById("nav").style.display = "unset";
+            changeGridArea();
+        }
         return {
             route: route, // contains {path, viewObject}
             isMatch: location.pathname === route.path //boleaan value
