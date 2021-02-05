@@ -1,15 +1,15 @@
-@media only screen and (max-width :700px){
+
+@media only screen and (max-width :1500px){
   #app {
     width: 100%;
     height:100%;
-    /* margin: 1em; */
-
     line-height: 1.5;
     font-weight: 500;
     display: grid;
     grid-template-areas:  
                           "canvas settingsbar"
                           "buttons buttons";
+                          
     grid-template-columns: 1fr .05fr;
     grid-template-rows: 2fr 0.1fr; 
     grid-area: app;
@@ -177,15 +177,15 @@
   display: grid; 
 }*/
 
- @media only screen and (min-width : 700px){ /*only screen and */
+ @media only screen and (min-width : 1500px){ /*only screen and */
   #app {
-    max-width: 1000px;
-    height: 700px;
+    width: 70%;
+    /* width: 70%; */
+    height: 80%;
     /* min-height: 50%; */
     /* margin: 1em; */
   
     line-height: 1.5;
-    font-weight: 500;
     display: grid;
     grid-template-areas:  
                           "canvas settingsbar"
@@ -197,6 +197,7 @@
   
   #canvas{
        width: 100%;
+       height:100%
        /* height: 100%; */
        margin: 0px;
        position: relative;
@@ -206,12 +207,12 @@
   }
   
   .body {
-    max-width: 100%;
-    max-height: 100%;
+    width: 100%;
+    height: 100%;
     /* --nav-width: 500px; */
     /* margin: 0 0 0 var(--nav-width); */
     font-family: 'Quicksand', sans-serif;
-    font-size: 24px;
+    /* font-size: 24px; */
     display: grid;
     /* grid-template-columns: 1fr; */
     grid-template-rows: 1fr 1fr;
@@ -222,7 +223,7 @@
     /* background: #F18C8E; */
     display: none;
     /* width: var(--nav-width); */
-    font-size: 24px;
+    /* font-size: 25px; */
     width: 100%;
     /* height: 100vh; */
     grid-area: nav;
@@ -232,14 +233,16 @@
     /* display: block; */
     padding: 12px 18px; /*top right bottom left*/
     text-decoration: none;
-    font-weight: 1000;
+    font-weight: 50px;
   }
   
   .nav__link:hover {
     background: rgba(0, 0, 0, 0.05);
   }
   
-  
+  p{
+    font-size: 75px;;
+  }
   
   a {
     color: black;
@@ -250,23 +253,25 @@
     height: 100%;
   
   }
-  
   .trace{
     position: absolute;
-  }
+  };
   
   .path{
     position:absolute;
   }
   
   #buttons{
-    width: 80%;
+    width: 50%;
     /* position: absolute; */
     grid-area: buttons;
   }
+  .buttons{
+    font-size: 50px;
+  }
   
   .sidebar{
-    width: 80%;
+    width: 50%;
     padding: 10px;
     background: #333;
     grid-area: sidebar;
@@ -276,6 +281,7 @@
   
   }
   #settingsbar{
+    width: 100%;
     grid-area: settingsbar;
     background: #ECDDD0;
     
@@ -283,9 +289,10 @@
   #settingscontent{
     display: none;
   }
+
   .toggle {
     text-decoration: none;
-    font-size: 30px;
+    font-size: 100px;
     color: black;
     -webkit-transition: all 0.15s ease-out 0;
        -moz-transition: all 0.15s ease-out 0;
@@ -334,14 +341,189 @@
   .tab button.active {
     background-color: #ccc;
   }
-  
+
   /* Style the tab content */
   .tabcontent {
     display: none;
     padding: 1% 2%;
     border: 1px solid #ccc;
     border-top: none;
-  };
+  }
 }
 
-} 
+@media (min-width: 992px) and (max-width : 1200px){
+  #app {
+    width: 100%;
+    /* width: 70%; */
+    height: 80%;
+    /* min-height: 50%; */
+    /* margin: 1em; */
+  
+    line-height: 1.5;
+    font-weight: 500;
+    display: grid;
+    grid-template-areas:  
+                          "canvas settingsbar"
+                          "buttons buttons";
+    grid-template-columns: 1fr .05fr;
+    grid-template-rows: 2fr 0.1fr; 
+    grid-area: app;
+  }
+  
+  #canvas{
+       width: 100%;
+       height:100%
+       /* height: 100%; */
+       margin: 0px;
+       position: relative;
+       background: #92B1B6;
+       touch-action: none;
+       grid-area: canvas;
+  }
+  
+  .body {
+    width: 100%;
+    height: 100%;
+    /* --nav-width: 500px; */
+    /* margin: 0 0 0 var(--nav-width); */
+    font-family: 'Quicksand', sans-serif;
+    /* font-size: 24px; */
+    display: grid;
+    /* grid-template-columns: 1fr; */
+    grid-template-rows: 1fr 1fr;
+    grid-area: "nav"
+                "app";
+  }
+  #nav {
+    /* background: #F18C8E; */
+    display: none;
+    /* width: var(--nav-width); */
+    font-size: 25px;
+    width: 100%;
+    /* height: 100vh; */
+    grid-area: nav;
+  }
+  
+  .nav__link {
+    /* display: block; */
+    padding: 12px 18px; /*top right bottom left*/
+    text-decoration: none;
+    font-weight: 1000px;
+  }
+  
+  .nav__link:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+  
+  p{
+    font-size: 15px;;
+  }
+  
+  a {
+    color: black;
+  }
+  
+  #layer1{
+    width: 100%;
+    height: 100%;
+  
+  }
+  .trace{
+    position: absolute;
+  };
+  
+  .path{
+    position:absolute;
+  }
+  
+  #buttons{
+    width: 50%;
+    /* position: absolute; */
+    grid-area: buttons;
+  }
+  .buttons{
+    font-size: 15px;
+  }
+  
+  .sidebar{
+    width: 50%;
+    padding: 10px;
+    background: #333;
+    grid-area: sidebar;
+    display: grid;
+    grid-template-areas: "";
+    display: none;
+  
+  }
+  #settingsbar{
+    width: 100%;
+    grid-area: settingsbar;
+    background: #ECDDD0;
+    
+  }
+  #settingscontent{
+    display: none;
+  }
+  .toggle {
+    text-decoration: none;
+    font-size: 50px;
+    color: black;
+    -webkit-transition: all 0.15s ease-out 0;
+       -moz-transition: all 0.15s ease-out 0;
+            transition: all 0.15s ease-out 0;
+    position: center;
+    top: 20px;
+    right: 20px;
+    z-index: 1;
+    cursor: pointer;
+    
+  }
+  
+  #top{
+    grid-area: top;
+  }
+  
+  .frame{
+    background: white;
+  }
+  
+  
+  /**************** tabs *******************************/
+  
+  .tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+  }
+  
+  /* Style the buttons that are used to open the tab content */
+  .tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    /* padding: 14px 16px; */
+    transition: 0.3s;
+  }
+  
+  /* Change background color of buttons on hover */
+  .tab button:hover {
+    background-color: #ddd;
+  }
+  
+  /* Create an active/current tablink class */
+  .tab button.active {
+    background-color: #ccc;
+  }
+
+  /* Style the tab content */
+  .tabcontent {
+    display: none;
+    padding: 1% 2%;
+    border: 1px solid #ccc;
+    border-top: none;
+  }
+
+
+}
