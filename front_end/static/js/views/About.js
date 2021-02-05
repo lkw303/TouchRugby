@@ -11,8 +11,7 @@ export default class extends AbstractView{
         <div id = "top">
         <h1> About Us</h1>
         <p>
-        STOP USING CONES!!!!!!!!!!!!!!!
-        This App was created to assist in showing different types of plays and tactics in Touch Rugby
+        This Web App was created to assist in showing different types of plays and tactics in Touch Rugby
         </p>
         
         <p>

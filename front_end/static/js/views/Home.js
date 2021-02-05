@@ -68,8 +68,8 @@ export default class extends AbstractView{
 
         <div id = "buttons" class = 'buttons'>
             
-            <button type = "buttons" class = "constructor" id = "constructor" onclick = "createAttack()">Create Attackers</button>
-            <button type = "buttons" class = "constructor" id = "constructor" onclick = "createDefend()">Create Defenders</button>
+            <button type = "buttons" class = "constructor" id = "constructor" onclick = "createAttack(initial_canvas_width, initial_canvas_height)">Create Attackers</button>
+            <button type = "buttons" class = "constructor" id = "constructor" onclick = "createDefend(initial_canvas_width, initial_canvas_height)">Create Defenders</button>
 
             <button type ="buttons" class = "destructor" id = "destructor" onclick = "removeAttack()"> Remove Attacker</button>
             <button type ="buttons" class = "destructor" id = "destructor" onclick = "removeDefend()"> Remove Defender</button>

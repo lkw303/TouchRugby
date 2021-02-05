@@ -43,8 +43,8 @@ function PlayerObject(id, pos_x, pos_y, state) {
     div.className = this.state;
     div.classList.add("circle");
     div.style.position = "absolute"
-    div.style.left = pos_x + "%";
-    div.style.top = pos_y + "%"
+    div.style.left = pos_x + "px";
+    div.style.top = pos_y + "px"
     div.style.width = width + "px";
     div.style.height = height + "px";
     document.getElementById("canvas").appendChild(div);
@@ -737,26 +737,35 @@ function PlayerObject(id, pos_x, pos_y, state) {
 //   playerCount++;
 // };
 
-function createAttack() {
+// function createPlayer(canvas_width, canvas_height, type){
+//   if(type === "attack"){
+//     if(attackCout<6){
+//       posx = (canvas_width / 6) * (attackCount % 6);
+//       posy = 50;
+//     }
+//   }
+// }
+
+function createAttack(canvas_width, canvas_height) {
   if (attackCount < 6) {
-    posx = (100 / 6) * (attackCount % 6);
-    posy = 50;
+    posx = (canvas_width/ 6) * (attackCount % 6);
+    posy = canvas_height*0.5;
     var attacker = new PlayerObject(attackCount, posx, posy, "attack");
     elem = document.getElementById(`attack${attackCount}`);
-    elem.style.background = "blue";
+    elem.style.background = "#F1C5AE";
     attackArr.push(attacker)
     attackCount++;
   }
 
 };
 
-function createDefend() {
+function createDefend(canvas_width, canvas_height) {
   if (defendCount < 6) {
-    posx = (100 / 6) * (defendCount % 6);
-    posy = Math.floor(defendCount / 6) * 50;
+    posx = (canvas_width / 6) * (defendCount % 6);
+    posy = Math.floor(defendCount / 6) * (canvas_height/2);
     var defender = new PlayerObject(defendCount, posx, posy, "defend");
     elem = document.getElementById(`defend${defendCount}`)
-    elem.style.background = "red";
+    elem.style.background = "#35455D";
     defendArr.push(defender);
     defendCount++;
 
