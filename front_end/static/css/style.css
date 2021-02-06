@@ -125,6 +125,10 @@
     background: white;
   }
 
+  img{
+    max-width: 100%;
+  }
+
   /**************** tabs *******************************/
 
   .tab {
@@ -241,11 +245,17 @@
   }
   
   p{
-    font-size: 75px;;
+    font-size: 75px;
   }
-  
+  h1{
+    font-size: 100px;
+  }
+  h2{
+    font-size: 75px;
+  }
   a {
     color: black;
+    font-size: 75px;
   }
   
   #layer1{
@@ -351,7 +361,7 @@
   }
 }
 
-@media (min-width: 992px) and (max-width : 1200px){
+@media (min-width: 1500px) and (max-width : 2000px){
   #app {
     width: 100%;
     /* width: 70%; */
@@ -398,7 +408,6 @@
     /* background: #F18C8E; */
     display: none;
     /* width: var(--nav-width); */
-    font-size: 25px;
     width: 100%;
     /* height: 100vh; */
     grid-area: nav;
@@ -416,11 +425,17 @@
   }
   
   p{
-    font-size: 15px;;
+    font-size: 15px;
   }
   
-  a {
-    color: black;
+  a{
+    font-size: 50px;
+  }
+  h1{
+    font-size: 100px;
+  }
+  h2{
+    font-size: 75px;
   }
   
   #layer1{
@@ -441,6 +456,7 @@
     /* position: absolute; */
     grid-area: buttons;
   }
+
   .buttons{
     font-size: 15px;
   }

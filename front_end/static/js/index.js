@@ -27,7 +27,7 @@ const router = async () =>{
     const potentialMatches = routes.map(route =>{ // for each route in the "routes" array an object below is returned
         if (location.pathname === route.path && route.path!="/"){
             document.getElementById("nav").style.display = "unset";
-            changeGridArea();
+            // changeGridArea(route.path);
         }
         return {
             route: route, // contains {path, viewObject}
@@ -51,8 +51,14 @@ const router = async () =>{
     const view = new match.route.view();
 
     document.querySelector("#app").innerHTML = await view.getHtml()
-    init_canvas();
-
+    console.log(match.route.path);
+    changeGridArea(match.route.path);
+    if(match.route.path === "/"){
+        
+        init_canvas();
+        
+    }
+    
     console.log(potentialMatches);
     //match.route.view();
 };

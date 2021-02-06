@@ -95,7 +95,13 @@ function updateCanvas() {
       
   }
 
-  function changeGridArea(){
+  function changeGridArea(route){
+    if (route === "/"|| route === "" ){
+      document.getElementById("app").style.gridTemplateAreas = ' "canvas settingsbar" "buttons buttons" ';
+    }
+    else{
+      document.getElementById("app").style.gridTemplateAreas = '"top"';
+    }
 
   }
 

@@ -9,6 +9,7 @@ export default class extends AbstractView{
 
     async getHtml(){
         return  `
+        <div id = "top">
         <h1> Settings</h1>
         <p>
             This is the settings page
@@ -16,6 +17,7 @@ export default class extends AbstractView{
         <p>
             <a href = "/posts" data-link> View recent posts</a>
         </p>
+        </div>
         `;
     }
 }

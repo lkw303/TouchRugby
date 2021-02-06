@@ -10,6 +10,7 @@ export default class extends AbstractView{
         return  `
         <div id = "top">
         <h1> About Us</h1>
+        <img src ="./static/media/images/sutd_touch_logo.jpg">
         <p>
         This Web App was created to assist in showing different types of plays and tactics in Touch Rugby
         </p>
