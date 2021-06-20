@@ -366,6 +366,46 @@ function PlayerObject(id, pos_x, pos_y, state, colour, size) {
     console.log("end back");
   };
 
+  // set frameOn to be true
+  // allowing the animation paths to be drawn
+  // when the lpayers are dragged
+  function toggleFrame() {
+    console.log("toggling frame")
+    var e = document.getElementById("frameOn");
+    opt = e.options[e.selectedIndex].value;
+    if (opt === "1") {
+      frameOn = true;
+      console.log("frame toggled on");
+      playerArr.forEach(p => {
+        p.frameOn();
+      });
+      attackArr.forEach(a => {
+        a.frameOn();
+      });
+      defendArr.forEach(d => {
+        d.frameOn();
+      });
+  
+    } else {
+      if (opt === "2") {
+        console.log("frame toggled off");
+        frameOn = false;
+        playerArr.forEach(p => {
+          p.frameOff();
+        });
+        attackArr.forEach(a => {
+          a.frameOff();
+        });
+        defendArr.forEach(d => {
+          d.frameOff();
+        });
+  
+      }
+    }
+  
+  };
+
+
   this.frameOn = function () {
     console.log("frame on")
     var elem = document.getElementById(this.id);
