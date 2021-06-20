@@ -76,6 +76,15 @@ export default class extends AbstractView{
 
             <button type = "buttons" class = "ball buttons" id = "ball" onclick = "createBall(initial_canvas_width, initial_canvas_height)"> Add Ball</button>
             <button type = "buttons" class = "destructor buttons" id = "destructed" onclick = "removeBall()"> remove ball</button>
+            </br>
+            <select name="frameOn" id="frameOn" onchange="toggleFrame()">
+                <option value=2>False</options>
+                <option value=1>True</options>
+            </select>
+            </br>
+            <button type="buttons" id="toggleFrame" onchange="toggleFrame()">toggleframe</button>
+            </br>
+            <button type="buttons" id="animate" onclick="runAnimate()">animate</button>           
             
             
         </div>
